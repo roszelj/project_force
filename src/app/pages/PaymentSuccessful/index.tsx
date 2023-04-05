@@ -61,7 +61,7 @@ export function PaymentSuccessful(props: Props) {
                 navigate('/error');
               } else {
                 setMessage('Payment succeeded!');
-                setPaymentDetails(paymentIntent);
+                //TODO I THINK THIS SHOULD GO AWAY - DOING THIS MORE OR LESS IN THE CLOUD FUNCTION - setPaymentDetails(paymentIntent);
               }
             });
 

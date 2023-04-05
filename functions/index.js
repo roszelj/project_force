@@ -120,7 +120,8 @@ exports.addPaymentDetail = functions.https.onRequest(async (req, res) => {
           .firestore()
           .collection('proposals')
           .doc(docId)
-          .set({ payment_history: list }, { merge: true });
+          .set({accepted_terms: true, payment_history: list }, { merge: true });
+
         res.send({ status: 'Update Completed' });
       }
     } catch (error) {
