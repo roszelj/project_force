@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<HomePage /> should render and match the snapshot 1`] = `
+<React.Fragment>
+  <Helmet
+    defer={true}
+    encodeSpecialCharacters={true}
+    prioritizeSeoTags={false}
+  >
+    <title>
+      Home Page
+    </title>
+    <meta
+      content="Prototype Proposal Generator"
+      name="Get started build a proposal"
+    />
+  </Helmet>
+  <NavBar />
+  <PageWrapper>
+    <ProposalForm />
+  </PageWrapper>
+</React.Fragment>
+`;
