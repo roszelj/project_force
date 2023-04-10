@@ -29,7 +29,7 @@ const slice = createSlice({
     },
     toggleLoading(state, action: PayloadAction<any>) {
       state.loading = action.payload;
-    }
+    },
   },
 });
 

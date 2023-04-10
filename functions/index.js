@@ -45,6 +45,7 @@ async function calculateOrderAmount(id) {
       });
 
     let amount = 0;
+    let installmentTerm = 0;
 
     switch (databaseInfo.payment_schedule) {
       case '100':
@@ -52,18 +53,21 @@ async function calculateOrderAmount(id) {
         break;
       case '50/2':
         amount = (Number(databaseInfo.price) / 2) * 100;
+        installmentTerm = 2;
         break;
       case '33/3':
         amount = (Number(databaseInfo.price) / 3) * 100;
+        installmentTerm = 3;
         break;
       case '25/4':
         amount = (Number(databaseInfo.price) / 4) * 100;
+        installmentTerm = 4;
         break;
       default:
         amount = Number(databaseInfo.deposit) * 100;
     }
 
-    return amount;
+    return { amount, installmentTerm };
   } catch (error) {
     // We want to capture errors and render them in a user-friendly way, while
     // still logging an exception to Error Reporting.
@@ -82,6 +86,7 @@ exports.addPaymentDetail = functions.https.onRequest(async (req, res) => {
     try {
       const docId = req.body.data.docId;
       const updatedOn = new Date();
+      const installment = Number(req.body.data.installment);
 
       const status = await admin
         .firestore()
@@ -90,14 +95,21 @@ exports.addPaymentDetail = functions.https.onRequest(async (req, res) => {
         .get();
 
       if (
+        status.data().payment_current_installment == installment
+        /*
         status.data().deposit_status == 'Paid' &&
         status.data().status == 'In Progress'
+        */
       ) {
         res.send({ status: 'No Update Needed' });
       } else {
-        let amount = await calculateOrderAmount(status.data().id);
+        let { amount, installmentTerm } = await calculateOrderAmount(
+          status.data().id,
+        );
 
         amount = amount / 100;
+
+        const paymentInstallment = installment + ' of ' + installmentTerm; //example 1 of 2
 
         //const existing_history = status.data().payment_history;
 
@@ -107,6 +119,7 @@ exports.addPaymentDetail = functions.https.onRequest(async (req, res) => {
             stripe_id: req.body.data.stripe_id,
             amount: amount.toFixed(2),
             createdOn: updatedOn.toISOString(),
+            paymentSchedule: paymentInstallment,
           },
         ];
         //const p = payment_history_array.find(ele => ele.stripe_id == req.body.data.stripe_id);
@@ -120,7 +133,10 @@ exports.addPaymentDetail = functions.https.onRequest(async (req, res) => {
           .firestore()
           .collection('proposals')
           .doc(docId)
-          .set({accepted_terms: true, payment_history: list }, { merge: true });
+          .set(
+            { payment_history: list, payment_current_installment: installment },
+            { merge: true },
+          );
 
         res.send({ status: 'Update Completed' });
       }
@@ -143,7 +159,7 @@ exports.createPaymentIntent = functions.https.onRequest(async (req, res) => {
   } else {
     const id = req.body.data.item.id;
 
-    const amount = await calculateOrderAmount(id);
+    const { amount } = await calculateOrderAmount(id);
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,

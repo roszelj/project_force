@@ -51,29 +51,28 @@ export function LoginForm(props: Props) {
     dispatch(actions.resetLogin());
   });
 
-   // Get redirect location or provide fallback
-  const location:any = useLocation();
+  // Get redirect location or provide fallback
+  const location: any = useLocation();
 
   if (loginData.currentUser.uid > '' && loginData.currentUser.role == 'user') {
-    if(!!loginData.currentUser.redirect){
-        navigate(loginData.currentUser.redirect)    
-    }else if(location.state?.from > ''){
-      const from = location.state?.from || "/";
-       navigate(from, { replace: true });
-    }else{
+    if (!!loginData.currentUser.redirect) {
+      navigate(loginData.currentUser.redirect);
+    } else if (location.state?.from > '') {
+      const from = location.state?.from || '/';
+      navigate(from, { replace: true });
+    } else {
       navigate('/');
     }
   } else if (
     loginData.currentUser.uid > '' &&
     loginData.currentUser.role == 'admin'
   ) {
-
-    if(!!loginData.currentUser.redirect){
-        navigate(loginData.currentUser.redirect)    
-    }else if(location.state?.from > ''){
-      const from = location.state?.from || "/admin";
-       navigate(from, { replace: true });
-    }else{
+    if (!!loginData.currentUser.redirect) {
+      navigate(loginData.currentUser.redirect);
+    } else if (location.state?.from > '') {
+      const from = location.state?.from || '/admin';
+      navigate(from, { replace: true });
+    } else {
       navigate('/admin');
     }
   }

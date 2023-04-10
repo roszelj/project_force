@@ -15,9 +15,15 @@ import { useNavigate } from 'react-router-dom';
 
 interface Props {
   docId: any;
+  paymentSchedule: String;
+  paymentCurrentInstallment: Number;
 }
 
-export function CheckoutForm({ docId }: Props) {
+export function CheckoutForm({
+  docId,
+  paymentSchedule,
+  paymentCurrentInstallment,
+}: Props) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -26,6 +32,8 @@ export function CheckoutForm({ docId }: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
   let navigate = useNavigate();
+
+  const _currentPaymentInstallment = Number(paymentCurrentInstallment) + 1;
 
   useEffect(() => {
     if (!stripe) {
@@ -76,7 +84,11 @@ export function CheckoutForm({ docId }: Props) {
         elements,
         confirmParams: {
           // Make sure to change this to your payment completion page
-          return_url: 'http://localhost:3000/payment-successful?docId=' + docId,
+          return_url:
+            'http://localhost:3000/payment-successful?docId=' +
+            docId +
+            '&installment=' +
+            _currentPaymentInstallment,
         },
       })
       .then(function (result) {

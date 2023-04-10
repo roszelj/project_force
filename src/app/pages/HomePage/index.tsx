@@ -7,7 +7,6 @@ import { PageWrapper } from 'app/components/PageWrapper';
 import { ProposalList } from 'app/components/Proposal/view/list/ProposalList';
 import { SaveCurrentRoute } from 'app/components/SaveCurrentRoute';
 
-
 // 4.) Add delete option
 // 7.) Clean out old code and get testing to work
 // 8.) (X) Build on new BBD instance

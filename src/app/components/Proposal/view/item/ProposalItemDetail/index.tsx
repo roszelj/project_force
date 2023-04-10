@@ -31,7 +31,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Grid from '@mui/material/Unstable_Grid2';
+//import Grid from '@mui/material/Unstable_Grid2';
 
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -54,12 +54,48 @@ import { ProjectStartCost } from 'app/components/ProjectStartCost';
 import { selectLogin } from 'app/components/LoginForm/slice/selectors';
 
 import { SaveCurrentRoute } from 'app/components/SaveCurrentRoute';
+import { TabNaviation } from 'app/components/Proposal/TabNavigation';
+import Grid from '@mui/material/Grid';
+import { themes } from 'styles/theme/themes';
 
-import "styles/stripe.css";
+import { purple } from '@mui/material/colors';
+
+import 'styles/stripe.css';
 
 interface Props {
   id: any;
 }
+/*
+declare module '@mui/material/styles' {
+  interface Theme {
+    status: {
+      danger: React.CSSProperties['color'];
+    };
+  }
+
+  interface Palette {
+    neutral: Palette['primary'];
+  }
+
+  interface PaletteOptions {
+    neutral: PaletteOptions['primary'];
+  }
+
+  interface PaletteColor {
+    darker?: string;
+  }
+
+  interface SimplePaletteColorOptions {
+    darker?: string;
+  }
+
+  interface ThemeOptions {
+    status: {
+      danger: React.CSSProperties['color'];
+    };
+  }
+}
+*/
 
 export function ProposalItemDetail({ id }: Props) {
   const [clientSecret, setClientSecret] = useState('');
@@ -94,22 +130,18 @@ export function ProposalItemDetail({ id }: Props) {
 
   const [checkoutOpen, setCheckoutOpen] = React.useState(false);
   const [paymentOpen, setPaymentOpen] = React.useState(false);
-  const [paymentFormLoading, setPaymentFormLoading] = React.useState(false)
+  const [paymentFormLoading, setPaymentFormLoading] = React.useState(false);
 
   const handleCheckoutOpen = () => {
     if (terms[0] == true && termsName > '') {
-
-      if (data.deposit > 0 || data.payment_schedule != 0) {
-        //dispatch(actions.toggleLoading(true));
+      if (data.payment_schedule != 0) {
         setCheckoutOpen(true);
       } else {
-
         loginData.currentUser.role === 'admin'
           ? navigate('/admin')
           : navigate('/');
       }
       //dispatch(actions.acceptTerms(true));
-      
     } else {
       terms[0] == false ? setTermsError(true) : null;
       terms[0] == false ? setTermsError(true) : null;
@@ -134,7 +166,10 @@ export function ProposalItemDetail({ id }: Props) {
         body: JSON.stringify({ data: { item: { id: data.id } } }),
       },
     )
-      .then(res => res.json()).then(data => {setClientSecret(data.clientSecret), setPaymentFormLoading(false)});
+      .then(res => res.json())
+      .then(data => {
+        setClientSecret(data.clientSecret), setPaymentFormLoading(false);
+      });
 
     handleCheckoutClose();
     handlePaymentOpen();
@@ -161,8 +196,22 @@ export function ProposalItemDetail({ id }: Props) {
     month: 'long',
     day: 'numeric',
   };
-  const lightTheme = createTheme({ palette: { mode: 'light' } });
-  const darkTheme = createTheme({ palette: { mode: 'dark' } });
+
+  //const lightTheme = createTheme({ palette: { mode: 'light' } });
+  //const darkTheme = createTheme({palette: themes.dark.palette});
+  const darkTheme = createTheme({
+    palette: {
+      primary: {
+        // Purple and green play nicely together.
+        main: 'rgba(220,120,95,1)',
+      },
+      secondary: {
+        // This is green.A700 as hex.
+        main: 'rgba(241,233,231,0.6)',
+      },
+      mode: 'dark',
+    },
+  });
 
   const appearance = {
     theme: 'night',
@@ -178,11 +227,11 @@ export function ProposalItemDetail({ id }: Props) {
       {isLoading && <LoadingIndicator />}
       <ThemeProvider theme={darkTheme}>
         <Box>
-          <Card sx={{ p: 1, marginBottom: 2, background: '#bce8f1' }}>
-            <Typography variant="h5" color="rgba(220,120,95,1)">
+          <HeaderCard>
+            <Typography variant="h5" color="secondary">
               {data.name}
             </Typography>
-          </Card>
+          </HeaderCard>
           <Paper
             variant="outlined"
             sx={{
@@ -205,7 +254,7 @@ export function ProposalItemDetail({ id }: Props) {
                       <Typography
                         sx={{ display: 'inline', fontWeight: 'bold' }}
                         component="span"
-                        color="text.primary"
+                        color="text.secondary"
                       >
                         Prepared For:
                       </Typography>
@@ -217,7 +266,7 @@ export function ProposalItemDetail({ id }: Props) {
               </ListItem>
               <ListItem sx={{ paddingLeft: 0, paddingTop: 0 }}>
                 <ListItemText>
-                  <Typography color="rgba(220,120,95,1)">
+                  <Typography color="primary">
                     {ISOtoLocaleString(data.createdOn, DateOptions)}
                   </Typography>
                 </ListItemText>
@@ -225,7 +274,12 @@ export function ProposalItemDetail({ id }: Props) {
             </List>
             <Card>
               <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  color="primary"
+                  component="div"
+                >
                   Objective Summary
                 </Typography>
                 <Typography
@@ -253,7 +307,12 @@ export function ProposalItemDetail({ id }: Props) {
               <Box key={count}>
                 <Card>
                   <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
+                    <Typography
+                      gutterBottom
+                      variant="h5"
+                      color="primary"
+                      component="div"
+                    >
                       {detail.item_title}
                     </Typography>
                     <Typography
@@ -269,7 +328,7 @@ export function ProposalItemDetail({ id }: Props) {
                         sx={{ display: 'inline', fontWeight: 'bold' }}
                         component="span"
                         variant="body2"
-                        color="text.primary"
+                        color="secondary"
                       >
                         Time Estimation:
                       </Typography>
@@ -282,9 +341,9 @@ export function ProposalItemDetail({ id }: Props) {
               </Box>
             ))}
             <Box sx={{ flexGrow: 1 }}>
-              <Grid container spacing={2} columns={8}>
-                <Grid sx={{ marginTop: 2, marginRight: 2 }} xs={4}>
-                  <Paper>
+              <Grid container spacing={2} columns={{ xs: 12, sm: 12, md: 12 }}>
+                <Grid xs={12} sm={12} md={5}>
+                  <Item>
                     <TableContainer component="div">
                       <Table aria-label="simple table">
                         <TableHead></TableHead>
@@ -295,10 +354,14 @@ export function ProposalItemDetail({ id }: Props) {
                             }}
                           >
                             <TableCell component="th" scope="row">
-                              Total Estimated Hours:
+                              <Typography color="secondary">
+                                Total Estimated Hours:
+                              </Typography>
                             </TableCell>
                             <TableCell align="right">
-                              {data.total_estimated_hours}
+                              <Typography color="secondary">
+                                {data.total_estimated_hours}
+                              </Typography>
                             </TableCell>
                           </TableRow>
                           <TableRow
@@ -307,10 +370,14 @@ export function ProposalItemDetail({ id }: Props) {
                             }}
                           >
                             <TableCell component="th" scope="row">
-                              Estimated Completion:
+                              <Typography color="secondary">
+                                Estimated Completion:
+                              </Typography>
                             </TableCell>
                             <TableCell align="right">
-                              {data.estimated_completion_date}
+                              <Typography color="secondary">
+                                {data.estimated_completion_date}
+                              </Typography>
                             </TableCell>
                           </TableRow>
                           <TableRow
@@ -319,10 +386,12 @@ export function ProposalItemDetail({ id }: Props) {
                             }}
                           >
                             <TableCell component="th" scope="row">
-                              Setup:
+                              <Typography color="secondary">Setup:</Typography>
                             </TableCell>
                             <TableCell align="right">
-                              {stringToCurrency(data.setup)}
+                              <Typography color="secondary">
+                                {stringToCurrency(data.setup)}
+                              </Typography>
                             </TableCell>
                           </TableRow>
                           <TableRow
@@ -331,23 +400,24 @@ export function ProposalItemDetail({ id }: Props) {
                             }}
                           >
                             <TableCell component="th" scope="row">
-                              Total Price:
+                              <Typography color="secondary">
+                                Total Price:
+                              </Typography>
                             </TableCell>
                             <TableCell align="right">
-                              {stringToCurrency(data.price)}
+                              <Typography color="secondary">
+                                {stringToCurrency(data.price)}
+                              </Typography>
                             </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
                     </TableContainer>
-                  </Paper>
+                  </Item>
                 </Grid>
-                <Grid
-                  sx={{ marginTop: 2, marginLeft: 0, marginRight: 2 }}
-                  xs={4}
-                >
+                <Grid xs={12} sm={12} md={7}>
                   {!data.accepted_terms ? (
-                    <Paper>
+                    <Item>
                       <Box sx={{ padding: 2, border: '1px dashed grey' }}>
                         <Div sx={{ paddingLeft: 0 }}>
                           <Typography
@@ -410,8 +480,19 @@ export function ProposalItemDetail({ id }: Props) {
                           </FormControl>
                         </FormGroup>
                       </Box>
-                    </Paper>
-                  ) : null}
+                    </Item>
+                  ) : (
+                    <Item>
+                      <TabNaviation
+                        payment_history={data.payment_history}
+                        paymentCurrentInstallment={
+                          data.payment_current_installment
+                        }
+                        paymentSchedule={data.payment_schedule}
+                        handlePayment={handlePayment}
+                      />
+                    </Item>
+                  )}
                 </Grid>
               </Grid>
             </Box>
@@ -427,7 +508,7 @@ export function ProposalItemDetail({ id }: Props) {
             <Typography id="modal-modal-title" variant="h6" component={H2}>
               Proceed to Checkout
             </Typography>
-           
+
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
               <ProjectStartCost />
             </Typography>
@@ -448,7 +529,8 @@ export function ProposalItemDetail({ id }: Props) {
           open={paymentOpen}
           onClose={handlePaymentClose}
           aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description">
+          aria-describedby="modal-modal-description"
+        >
           <ModalStyle>
             <Typography id="modal-modal-title" variant="h6" component={H2}>
               Proceed to Checkout
@@ -457,24 +539,45 @@ export function ProposalItemDetail({ id }: Props) {
             <div className="App">
               {clientSecret && (
                 <Elements options={options} stripe={stripePromise}>
-                  <CheckoutForm docId={data.docId} />
+                  <CheckoutForm
+                    docId={data.docId}
+                    paymentCurrentInstallment={data.payment_current_installment}
+                    paymentSchedule={data.payment_schedule}
+                  />
                 </Elements>
               )}
             </div>
           </ModalStyle>
         </Modal>
       </ThemeProvider>
+
       <SaveCurrentRoute />
     </>
   );
 }
+
+const HeaderCard = styled(Card)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
+  padding: theme.spacing(1),
+  marginBottom: theme.spacing(2),
+}));
+
+const Item = styled(Paper)(({ theme }) => ({
+  //backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'left',
+  marginLeft: theme.spacing(2),
+  marginBottom: theme.spacing(2),
+  color: theme.palette.secondary.main,
+}));
 
 const A = styled('a')(({ theme }) => ({
   color: theme.palette.text.primary,
 }));
 
 const H2 = styled('h2')(({ theme }) => ({
-  color: theme.palette.text.primary,
+  color: theme.palette.primary,
 }));
 
 const DepositStyle = styled(Paper)(({ theme }) => ({
@@ -498,14 +601,14 @@ const ModalStyle = styled(Box)({
   color: p => p.theme.palette.text.primary,
 });
 
-const Div = styled(Box)`
-  color: ${p => p.theme.palette.text.primary};
-  font-weight: 400;
-  font-size: 0.875rem;
-  line-height: 1.43;
-  letter-spacing: 0.01071em;
-  padding: 8px;
-`;
+const Div = styled(Box)(({ theme }) => ({
+  color: theme.palette.primary.main,
+  fontWeight: 400,
+  fontSize: '0.875rem',
+  lineHeight: 1.43,
+  letterSpacing: '0.01071em',
+  padding: '8px',
+}));
 
 const OutlinedButton = styled(Button)<ButtonProps>`
   backgroundcolor: '#999999';

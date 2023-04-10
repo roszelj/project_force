@@ -62,7 +62,7 @@ export function ProposalForm({ id, reset }: Props) {
       {
         isValid: value => !!value,
         message: 'Is required',
-      }
+      },
     ],
     price: [
       {
@@ -238,8 +238,8 @@ export function ProposalForm({ id, reset }: Props) {
             placeholder="Project Summary"
             name="summary"
             defaultValue={form_data.summary}
-            onChange={handleChange}>
-          </TextArea>
+            onChange={handleChange}
+          ></TextArea>
 
           {errorFields['summary']?.length ? (
             <span style={{ color: 'red' }}>

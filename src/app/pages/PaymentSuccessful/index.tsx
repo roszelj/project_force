@@ -35,6 +35,9 @@ export function PaymentSuccessful(props: Props) {
     );
 
     const docId = new URLSearchParams(window.location.search).get('docId');
+    const installment = new URLSearchParams(window.location.search).get(
+      'installment',
+    );
 
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
       if (paymentIntent !== undefined && paymentIntent.status) {
@@ -50,6 +53,7 @@ export function PaymentSuccessful(props: Props) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   data: {
+                    installment: installment,
                     deposit_status: 'paid',
                     docId: docId,
                     stripe_id: paymentIntent.client_secret,

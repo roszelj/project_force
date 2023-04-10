@@ -1,6 +1,5 @@
 import { GithubRepoFormState } from 'app/pages/HomePage/Features/GithubRepoForm/slice/types';
 import { ThemeState } from 'styles/theme/slice/types';
-import { ProposalState } from 'app/components/Proposal/create/slice/types';
 import { ProposalListState } from 'app/components/Proposal/view/list/ProposalList/slice/types';
 import { ProposalDetailState } from 'app/components/Proposal/view/item/ProposalItemDetail/slice/types';
 import { ProposalFormState } from 'app/components/Proposal/forms/ProposalForm/slice/types';
@@ -16,7 +15,6 @@ import { PaymentScheduleState } from 'app/components/ProjectStartCost/slice/type
 export interface RootState {
   theme?: ThemeState;
   githubRepoForm?: GithubRepoFormState;
-  proposal?: ProposalState;
   proposalList?: ProposalListState;
   proposalDetail?: ProposalDetailState;
   proposalForm?: ProposalFormState;

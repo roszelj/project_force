@@ -12,10 +12,9 @@ export function Nav() {
   const dispatch = useDispatch();
 
   const logoutUser = () => {
-
     window.location.href = '/login';
     sessionStorage.clear();
-  }
+  };
 
   return (
     <Wrapper>

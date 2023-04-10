@@ -2,12 +2,19 @@ import * as React from 'react';
 import styled, { keyframes } from 'styled-components/macro';
 
 interface Props extends SvgProps {
-  strokeColor?:any; 
+  strokeColor?: any;
 }
 
 export const LoadingIndicator = (props: Props) => (
   <Svg viewBox="-24 -24 48 48" small={props.small}>
-    <Circle cx="0" cy="0" r="20" fill="none" stroke={props.strokeColor} strokeWidth="4"></Circle>
+    <Circle
+      cx="0"
+      cy="0"
+      r="20"
+      fill="none"
+      stroke={props.strokeColor}
+      strokeWidth="4"
+    ></Circle>
   </Svg>
 );
 
@@ -36,7 +43,6 @@ const dash = keyframes`
 
 interface SvgProps {
   small?: boolean;
-
 }
 
 const Svg = styled.svg<SvgProps>`

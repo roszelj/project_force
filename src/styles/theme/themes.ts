@@ -7,10 +7,13 @@ const lightTheme = {
   border: 'rgba(58,52,51,0.12)',
   borderLight: 'rgba(58,52,51,0.05)',
   palette: {
-    text: {
-      primary: 'rgba(215,113,88,1)',
-      secondary: 'rgba(58,52,51,0.7)',
+    primary: {
+      main: 'rgba(215,113,88,1)',
     },
+    secondary: {
+      main: 'rgba(58,52,51,0.7)',
+    },
+    mode: 'light',
   },
 };
 
@@ -23,10 +26,13 @@ const darkTheme: Theme = {
   border: 'rgba(241,233,231,0.15)',
   borderLight: 'rgba(241,233,231,0.05)',
   palette: {
-    text: {
-      primary: 'rgba(220,120,95,1)',
-      secondary: 'rgba(58,52,51,0.7)',
+    primary: {
+      main: 'rgba(220,120,95,1)',
     },
+    secondary: {
+      main: 'rgba(241,233,231,0.6)',
+    },
+    mode: 'dark',
   },
 };
 

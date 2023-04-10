@@ -64,9 +64,8 @@ export function App() {
   useEffect(() => {
     onAuthStateChange();
   }, []);
-  
-  const ProtectedRoute = (
-    {
+
+  const ProtectedRoute = ({
     isAllowed,
     redirectPath = '/login',
     state,
@@ -75,7 +74,7 @@ export function App() {
     const location = useLocation();
 
     if (!isAllowed) {
-      return <Navigate to={redirectPath} state={{from: location}} replace />;
+      return <Navigate to={redirectPath} state={{ from: location }} replace />;
     }
 
     return <Outlet />;
@@ -101,7 +100,7 @@ export function App() {
           element={
             <ProtectedRoute
               redirectPath="/"
-              state={{from: location}}
+              state={{ from: location }}
               isAllowed={
                 !!loginData.currentUser.uid &&
                 loginData.currentUser.role === 'admin'
@@ -117,7 +116,12 @@ export function App() {
           </Route>
         </Route>
         <Route
-          element={<ProtectedRoute isAllowed={!!loginData.currentUser.uid} state={{from: location}} />}
+          element={
+            <ProtectedRoute
+              isAllowed={!!loginData.currentUser.uid}
+              state={{ from: location }}
+            />
+          }
         >
           <Route path="/proposal">
             <Route path=":id" element={<ProposalDetail />} />
