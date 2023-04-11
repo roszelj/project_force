@@ -8,6 +8,11 @@ export const selectProposalDetail = createSelector(
   proposalDetailState => proposalDetailState.proposal,
 );
 
+export const selectProposalBalance = createSelector(
+  [selectSlice],
+  proposalBalanceState => proposalBalanceState.proposal.project_balance,
+);
+
 export const selectLoading = createSelector(
   [selectSlice],
   state => state.loading,

@@ -63,8 +63,14 @@ async function calculateOrderAmount(id) {
         amount = (Number(databaseInfo.price) / 4) * 100;
         installmentTerm = 4;
         break;
+      case '0/0':
+        amount =
+          databaseInfo.deposit != '0.00' && databaseInfo.deposit_status === ''
+            ? Number(databaseInfo.deposit) * 100
+            : Number(databaseInfo.project_balance) * 100;
+        break;
       default:
-        amount = Number(databaseInfo.deposit) * 100;
+        amount = 0;
     }
 
     return { amount, installmentTerm };
@@ -102,14 +108,64 @@ exports.addPaymentDetail = functions.https.onRequest(async (req, res) => {
         */
       ) {
         res.send({ status: 'No Update Needed' });
-      } else {
+      } else if (
+        status.data().deposit != '0.00' &&
+        status.data().deposit_status === ''
+      ) {
+        //RUN PAYMENT AS DEPOSIT
         let { amount, installmentTerm } = await calculateOrderAmount(
           status.data().id,
         );
 
         amount = amount / 100;
 
-        const paymentInstallment = installment + ' of ' + installmentTerm; //example 1 of 2
+        let list = [
+          {
+            stripe_id: req.body.data.stripe_id,
+            amount: amount.toFixed(2),
+            paymentSchedule: 'Deposit',
+            createdOn: updatedOn.toISOString(),
+          },
+        ];
+
+        const f = status.data().payment_history.map(val => {
+          if (val.stripe_id != req.body.data.stripe_id) {
+            list = [...list, val];
+          }
+        });
+
+        const update = await admin
+          .firestore()
+          .collection('proposals')
+          .doc(docId)
+          .set(
+            {
+              deposit_status: 'Paid',
+              project_balance: Number(status.data().project_balance) - amount,
+              payment_history: list,
+            },
+            { merge: true },
+          );
+
+        res.send({ status: 'Update Completed' });
+      } else {
+        // RUN PAYMENT AS A INSTALLMENT OR ONE TIME PAYMENT
+        let { amount, installmentTerm } = await calculateOrderAmount(
+          status.data().id,
+        );
+
+        amount = amount / 100;
+
+        let paymentInstallment = '';
+
+        if (
+          status.data().payment_schedule === '0/0' ||
+          status.data().payment_schedule === '100'
+        ) {
+          paymentInstallment = 'One Time Payment';
+        } else {
+          paymentInstallment = installment + ' of ' + installmentTerm;
+        }
 
         //const existing_history = status.data().payment_history;
 
@@ -134,7 +190,11 @@ exports.addPaymentDetail = functions.https.onRequest(async (req, res) => {
           .collection('proposals')
           .doc(docId)
           .set(
-            { payment_history: list, payment_current_installment: installment },
+            {
+              payment_history: list,
+              project_balance: status.data().project_balance.toFixed(2) - amount.toFixed(2),
+              payment_current_installment: installment,
+            },
             { merge: true },
           );
 
@@ -162,7 +222,7 @@ exports.createPaymentIntent = functions.https.onRequest(async (req, res) => {
     const { amount } = await calculateOrderAmount(id);
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount,
+      amount: amount.toFixed(0),
       currency: 'usd',
       automatic_payment_methods: {
         enabled: true,

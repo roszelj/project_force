@@ -18,7 +18,10 @@ export function ProjectStartCost(props: Props) {
   return (
     <Div>
       {data.deposit > 0 ? (
-        <h5>This project requires a deposit to proceed.</h5>
+        <Div>
+          <h5>This project requires a deposit to proceed.</h5>
+          <Box>{stringToCurrency(data.deposit)}</Box>
+        </Div>
       ) : null}
       {data.payment_schedule == 100 ? (
         <Div>

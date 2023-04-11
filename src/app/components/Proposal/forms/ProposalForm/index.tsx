@@ -309,7 +309,7 @@ export function ProposalForm({ id, reset }: Props) {
             onChange={handleChange}
             defaultValue={form_data.payment_schedule}
           >
-            <option value="0">None</option>
+            <option value="0/0">None</option>
             <option value="100">100% (Paid all up front)</option>
             <option value="50/2">50% (50% to start 50% when completed </option>
             <option value="33/3">

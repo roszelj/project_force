@@ -22,9 +22,12 @@ export const initialState: ProposalFormState = {
     discount: '',
     setup: '',
     payment_history: [],
+    project_balance: 0,
     project_status_history: [],
     total_estimated_hours: '',
     estimated_completion_date: '',
+    payment_current_installment: 0,
+    payment_schedule: '0/0',
     status: 'open',
     terms: '',
     accepted_terms: false,
@@ -42,6 +45,7 @@ const slice = createSlice({
     },
     update(state, action: PayloadAction<any>) {
       state.proposal[action.payload.field] = action.payload.value;
+      state.proposal.project_balance = state.proposal.price;
     },
     loadProposalItem(state, action: PayloadAction<any>) {
       state.proposal = action.payload;

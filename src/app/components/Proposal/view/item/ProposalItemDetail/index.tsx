@@ -490,6 +490,7 @@ export function ProposalItemDetail({ id }: Props) {
                         }
                         paymentSchedule={data.payment_schedule}
                         handlePayment={handlePayment}
+                        projectBalance={Math.floor(data.project_balance)}
                       />
                     </Item>
                   )}
