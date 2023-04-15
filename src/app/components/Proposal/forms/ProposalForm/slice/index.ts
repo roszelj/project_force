@@ -33,10 +33,7 @@ export const initialState: ProposalFormState = {
     accepted_terms: false,
     client_uid: '',
     admin_uid: '',
-    project_items: [{
-      stories:[]
-    }
-    ],
+    project_items: [],
   },
 };
 
@@ -68,9 +65,7 @@ const slice = createSlice({
         ele => ele._id === action.payload.item_id,
       );
 
-      const g = f.stories.find(
-        ele => ele._id === action.payload._id
-      )
+      const g = f.stories.find(ele => ele._id === action.payload._id);
 
       g[action.payload.name] = action.payload.value;
     },
@@ -83,7 +78,17 @@ const slice = createSlice({
       const f = state.proposal.project_items.find(
         ele => ele._id === action.payload.item_id,
       );
-      const items = (({ _id, title, description, points, status, type, created_on }) => ({ _id, title, description, points, status, type, created_on}))(action.payload);
+      const items = (({
+        _id,
+        title,
+        description,
+        points,
+        status,
+        type,
+        created_on,
+      }) => ({ _id, title, description, points, status, type, created_on }))(
+        action.payload,
+      );
       f.stories.push(items);
     },
     removeProjectItem(state, action: PayloadAction<any>) {
@@ -97,12 +102,9 @@ const slice = createSlice({
         ele => ele._id === action.payload.item_id,
       );
 
-      const g = f.stories.filter(
-        ele => ele._id !== action.payload.story_id,
-      );
+      const g = f.stories.filter(ele => ele._id !== action.payload.story_id);
 
       f.stories = g;
-
     },
     saveProposal(state, action: PayloadAction<any>) {
       state.proposal.updatedOn = formatToISO();

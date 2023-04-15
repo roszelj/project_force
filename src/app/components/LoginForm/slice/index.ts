@@ -33,7 +33,7 @@ const slice = createSlice({
       state.currentUser = action.payload;
       state.loading = false;
     },
-    refreshUser(state, action: PayloadAction<any>){
+    refreshUser(state, action: PayloadAction<any>) {
       state.currentUser = action.payload;
       state.loading = true;
     },

@@ -3,7 +3,7 @@
  * ProposalItemDetail
  *
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 //import styled from 'styled-components/macro';
 import { initialState, useProposalDetailSlice } from './slice';
 import { useSelector, useDispatch } from 'react-redux';
@@ -59,43 +59,13 @@ import Grid from '@mui/material/Grid';
 import { themes } from 'styles/theme/themes';
 import { EpicMenu } from 'app/components/Proposal/EpicMenu';
 import { StoriesAccordion } from 'app/components/Proposal/StoriesAccordion';
+import { EpicEditModal } from 'app/components/EpicEditModal';
 
 import 'styles/stripe.css';
 
 interface Props {
   id: any;
 }
-/*
-declare module '@mui/material/styles' {
-  interface Theme {
-    status: {
-      danger: React.CSSProperties['color'];
-    };
-  }
-
-  interface Palette {
-    neutral: Palette['primary'];
-  }
-
-  interface PaletteOptions {
-    neutral: PaletteOptions['primary'];
-  }
-
-  interface PaletteColor {
-    darker?: string;
-  }
-
-  interface SimplePaletteColorOptions {
-    darker?: string;
-  }
-
-  interface ThemeOptions {
-    status: {
-      danger: React.CSSProperties['color'];
-    };
-  }
-}
-*/
 
 export function ProposalItemDetail({ id }: Props) {
   const [clientSecret, setClientSecret] = useState('');
@@ -103,6 +73,8 @@ export function ProposalItemDetail({ id }: Props) {
   const [termsError, setTermsError] = useState(false);
   const [termsName, setTermsName] = useState('');
   const [termsNameError, setTermsNameError] = useState(false);
+
+  const epicEditRef: any = useRef();
 
   const loginData = useSelector(selectLogin);
 
@@ -126,6 +98,7 @@ export function ProposalItemDetail({ id }: Props) {
 
   useEffectOnMount(() => {
     dispatch(actions.getProposal(id));
+    
   });
 
   const [checkoutOpen, setCheckoutOpen] = React.useState(false);
@@ -212,6 +185,10 @@ export function ProposalItemDetail({ id }: Props) {
       mode: 'dark',
     },
   });
+
+  const handleEditEpic = epicId => {
+    epicEditRef.current.openModal(data.project_items[epicId]);
+  };
 
   const appearance = {
     theme: 'night',
@@ -307,14 +284,31 @@ export function ProposalItemDetail({ id }: Props) {
               <Box key={count}>
                 <Card>
                   <CardContent>
-                    <Typography
+                    
+
+
+                    <Stack
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="flex-start"
+              spacing={2}
+              sx={{ width: '100%' }}
+            >
+              <Typography
                       gutterBottom
                       variant="h5"
                       color="primary"
                       component="div"
+                      sx={{ width: '75%', flexShrink: 0}}
                     >
                       {detail.item_title}
                     </Typography>
+              <Typography sx={{ width: '100%', textAlign: 'right' }} variant="body2" color="secondary">
+                {detail.status}
+              </Typography>
+            </Stack>
+                
+
                     <Typography
                       variant="body2"
                       color="text.secondary"
@@ -337,21 +331,24 @@ export function ProposalItemDetail({ id }: Props) {
                     </Div>
                     {detail.stories?.length ? (
                       <div>
-                      <Divider
-                role="presentation"
-                component="div"
-                sx={{ textAlign: 'left' }}
-              >
-                <Typography variant="h6" color="primary">
-                  Stories
-                </Typography>
-              </Divider>
-                      <StoriesAccordion stories={detail.stories}/>
+                        <Divider
+                          role="presentation"
+                          component="div"
+                          sx={{ textAlign: 'left' }}
+                        >
+                          <Typography variant="h6" color="primary">
+                            Stories
+                          </Typography>
+                        </Divider>
+                        <StoriesAccordion stories={detail.stories} />
                       </div>
                     ) : null}
                   </CardContent>
                   <Box sx={{ textAlign: 'right' }}>
-                    <EpicMenu epicId={count} />
+                    <EpicMenu
+                      handleEditEpic={handleEditEpic}
+                      epicId={detail._id}
+                    />
                   </Box>
                 </Card>
                 <Div>&nbsp;</Div>
@@ -518,14 +515,12 @@ export function ProposalItemDetail({ id }: Props) {
         </Box>
         {loginData.currentUser.uid === data.admin_uid ? (
           <Div>
-          <Button
-            onClick={() => navigate('/admin/proposal/' + id + '/edit')}
-          >
-            Edit
-          </Button>
-        </Div>
-        ): null}
-        
+            <Button onClick={() => navigate('/admin/proposal/' + id + '/edit')}>
+              Edit
+            </Button>
+          </Div>
+        ) : null}
+
         <Modal
           open={checkoutOpen}
           onClose={handleCheckoutClose}
@@ -577,6 +572,7 @@ export function ProposalItemDetail({ id }: Props) {
             </div>
           </ModalStyle>
         </Modal>
+        <EpicEditModal ref={epicEditRef} />
       </ThemeProvider>
 
       <SaveCurrentRoute />

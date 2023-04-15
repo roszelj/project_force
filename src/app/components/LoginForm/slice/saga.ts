@@ -41,7 +41,6 @@ export function* authUser() {
   const userCreds: any = yield select(selectLogin);
 
   try {
-
     yield call(setPersistence, auth, browserSessionPersistence);
 
     const userCredential: any = yield call(
@@ -58,20 +57,17 @@ export function* authUser() {
 
     const userJson = userCredential.user.toJSON();
 
-    const userRef = doc(firestore, "users", userCredential.user.uid);
+    const userRef = doc(firestore, 'users', userCredential.user.uid);
 
     console.log(userCredential.user.uid);
     const docSnap: any = yield call(getDoc, userRef);
 
     userJson.role = docSnap.data().role;
 
-
     yield put(actions.loadUser(userJson));
   } catch (err: any) {
-
     yield put(actions.authError(err.message));
   }
- 
 }
 
 export function* reAuthUser() {
@@ -92,15 +88,13 @@ export function* reAuthUser() {
   const user: any = yield select(selectLogin);
 
   try {
-
-    const userRef = doc(firestore, "users", user.currentUser.uid);
+    const userRef = doc(firestore, 'users', user.currentUser.uid);
 
     const docSnap: any = yield call(getDoc, userRef);
 
-    const data = {...user.currentUser, role: docSnap.data().role};
+    const data = { ...user.currentUser, role: docSnap.data().role };
 
     yield put(actions.loadUser(data));
-
   } catch (err: any) {
     const errorCode = err.code;
     const errorMessage = err.message;
@@ -164,7 +158,7 @@ export function* registerUser() {
     yield call(
       setDoc,
       userRef,
-      { name: userInfo.name, company: userInfo.company, role:'user'},
+      { name: userInfo.name, company: userInfo.company, role: 'user' },
       { merge: true },
     );
 
@@ -179,7 +173,6 @@ export function* registerUser() {
     let databaseInfo: any = {};
 
     querySnapshot.forEach(item => {
-
       const docRef = doc(firestore, FirebaseConfig.DATASOURCE, item.id);
 
       setDoc(docRef, { client_uid: userCredential.user.uid }, { merge: true });
@@ -199,5 +192,4 @@ export function* loginSaga() {
   yield takeLatest(actions.registered.type, authUser);
   yield takeLatest(actions.forgotPassword.type, resetPassword);
   yield takeLatest(actions.refreshUser.type, reAuthUser);
-
 }

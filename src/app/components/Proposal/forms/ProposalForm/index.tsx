@@ -172,8 +172,9 @@ export function ProposalForm({ id, reset }: Props) {
         return;
       }
 
-      dispatch(actions.update({value:user.currentUser.uid, field: "admin_uid"}));
-
+      dispatch(
+        actions.update({ value: user.currentUser.uid, field: 'admin_uid' }),
+      );
 
       id
         ? dispatch(actions.saveProposal(true))
@@ -188,6 +189,12 @@ export function ProposalForm({ id, reset }: Props) {
       _id: form_data.project_items.length,
       item_title: '',
       description: '',
+      status: 'open',
+      version: '1',
+      created_on: formatToISO(),
+      updated_on: formatToISO(),
+      stories: [],
+      comments: [],
     };
 
     dispatch(actions.addNewProjectItem(list_items));
@@ -201,7 +208,9 @@ export function ProposalForm({ id, reset }: Props) {
 
   const removeStory = (item_id, story_id) => {
     console.log(story_id);
-    dispatch(actions.removeProjectItemStory({item_id: item_id, story_id: story_id}))
+    dispatch(
+      actions.removeProjectItemStory({ item_id: item_id, story_id: story_id }),
+    );
   };
 
   const handleStoryChange = (item_id, story_id, evt) => {
@@ -213,7 +222,7 @@ export function ProposalForm({ id, reset }: Props) {
     };
 
     dispatch(actions.updateProjectItemStory(new_item));
-  }
+  };
 
   const addStory = (item_id, new_id, evt) => {
     const list_story = {
@@ -359,7 +368,6 @@ export function ProposalForm({ id, reset }: Props) {
               25% (Payment split - start/milestone 1/milestone 2/end)
             </option>
           </Select>
-  
         </InputWrapper>
 
         <FormLabel>Discount</FormLabel>
@@ -472,108 +480,124 @@ export function ProposalForm({ id, reset }: Props) {
                 />
               </InputWrapper>
 
-             
-              
-              {item.stories?.map((story,count) => (
+              {item.stories?.map((story, count) => (
                 <FieldSet key={count}>
-                <legend>Enter Project Story</legend>
-                <Div>
-                  <InputWrapper key={form_data.id + 14}>
-                    <Input
-                      placeholder="Title"
-                      name="title"
-                      onChange={evt => {
-                        handleStoryChange(item._id, story._id, evt);
-                      }}
-                      defaultValue={story.title}
-                    />
-                  </InputWrapper>
-                  <InputWrapper key={form_data.id + 15}>
-                    <TextArea
-                      placeholder="Description"
-                      name="description"
-                      onChange={evt => {
-                        handleStoryChange(item._id, story._id, evt);
-                      }}
-                      defaultValue={story.description}
-                    />
-                  </InputWrapper>
-                  
-                  <FormLabel>Points</FormLabel>
-                  <InputWrapper key={form_data.id + 16}>
-                  <Select
-                    name="points"
-                    onChange={evt => {
-                      handleStoryChange(item._id, story._id, evt);
-                    }}
-                    defaultValue={story.points}
-                  >
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="5">5</option>
-                    <option value="8">8</option>
-                    <option value="13">13</option>
-                    <option value="20">20</option>
-                    <option value="40">40</option>
-                    <option value="100">100</option>
-                  </Select>
-                  </InputWrapper>
-                  <FormLabel>Status</FormLabel>
-                  <InputWrapper key={form_data.id + 17}>
-                  <Select
-                    name="status"
-                    onChange={evt => {
-                      handleStoryChange(item._id, story._id, evt);
-                    }}
-                    defaultValue={story.status}
-                  >
-                    <option value="open">Open</option>
-                    <option value="ready to work">Ready to work</option>
-                    <option value="in progress">In Progress</option>
-                    <option value="ready for acceptance">Ready for acceptance</option>
-                    <option value="accepted">Accepted</option>
-                    <option value="deployed">Deployed</option>
-                    <option value="blocked">Blocked</option>
-                    <option value="on hold">On Hold</option>
-                    <option value="completed">Completed</option>
-                  </Select>
-                  </InputWrapper>
+                  <legend>Enter Project Story</legend>
+                  <Div>
+                    <InputWrapper key={form_data.id + 14}>
+                      <Input
+                        placeholder="Title"
+                        name="title"
+                        onChange={evt => {
+                          handleStoryChange(item._id, story._id, evt);
+                        }}
+                        defaultValue={story.title}
+                      />
+                    </InputWrapper>
+                    <InputWrapper key={form_data.id + 15}>
+                      <TextArea
+                        placeholder="Description"
+                        name="description"
+                        onChange={evt => {
+                          handleStoryChange(item._id, story._id, evt);
+                        }}
+                        defaultValue={story.description}
+                      />
+                    </InputWrapper>
 
-                  <FormLabel>Type</FormLabel>
-                  <InputWrapper key={form_data.id + 18}>
-                  <Select
-                    name="type"
-                    onChange={evt => {
-                      handleStoryChange(item._id, story._id, evt);
-                    }}
-                    defaultValue={story.type}
-                  >
-                    <option value="user">User Story - (Small Piece of Desired Functionality)</option>
-                    <option value="enabler - infra">Enabler Story - (Infrastructure)</option>
-                    <option value="enabler - arch">Enabler Story - (Architecture)</option>
-                    <option value="enabler - explor">Enabler Story - (Exploration)</option>
-                    <option value="enanbler - comp">Enabler Story - (Compliance)</option>
-                    <option value="bug">Bug</option>
-                  </Select>
-                  </InputWrapper>
-                  <A
-                onClick={() => {
-                  removeStory(item._id, story._id);
-                }}
-                >
-                Remove Story
-                </A>
-                </Div>
-                 </FieldSet>
-               
+                    <FormLabel>Points</FormLabel>
+                    <InputWrapper key={form_data.id + 16}>
+                      <Select
+                        name="points"
+                        onChange={evt => {
+                          handleStoryChange(item._id, story._id, evt);
+                        }}
+                        defaultValue={story.points}
+                      >
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="5">5</option>
+                        <option value="8">8</option>
+                        <option value="13">13</option>
+                        <option value="20">20</option>
+                        <option value="40">40</option>
+                        <option value="100">100</option>
+                      </Select>
+                    </InputWrapper>
+                    <FormLabel>Status</FormLabel>
+                    <InputWrapper key={form_data.id + 17}>
+                      <Select
+                        name="status"
+                        onChange={evt => {
+                          handleStoryChange(item._id, story._id, evt);
+                        }}
+                        defaultValue={story.status}
+                      >
+                        <option value="open">Open</option>
+                        <option value="ready to work">Ready to work</option>
+                        <option value="in progress">In Progress</option>
+                        <option value="ready for acceptance">
+                          Ready for acceptance
+                        </option>
+                        <option value="accepted">Accepted</option>
+                        <option value="deployed">Deployed</option>
+                        <option value="blocked">Blocked</option>
+                        <option value="on hold">On Hold</option>
+                        <option value="completed">Completed</option>
+                      </Select>
+                    </InputWrapper>
+
+                    <FormLabel>Type</FormLabel>
+                    <InputWrapper key={form_data.id + 18}>
+                      <Select
+                        name="type"
+                        onChange={evt => {
+                          handleStoryChange(item._id, story._id, evt);
+                        }}
+                        defaultValue={story.type}
+                      >
+                        <option value="user">
+                          User Story - (Small Piece of Desired Functionality)
+                        </option>
+                        <option value="enabler - infra">
+                          Enabler Story - (Infrastructure)
+                        </option>
+                        <option value="enabler - arch">
+                          Enabler Story - (Architecture)
+                        </option>
+                        <option value="enabler - explor">
+                          Enabler Story - (Exploration)
+                        </option>
+                        <option value="enanbler - comp">
+                          Enabler Story - (Compliance)
+                        </option>
+                        <option value="bug">Bug</option>
+                      </Select>
+                    </InputWrapper>
+                    <A
+                      onClick={() => {
+                        removeStory(item._id, story._id);
+                      }}
+                    >
+                      Remove Story
+                    </A>
+                  </Div>
+                </FieldSet>
               ))}
-             
-               
-             
 
               <InputWrapper>
-                  <TextButton onClick={evt => {addStory(item._id, (item.stories?.length ? item.stories.length : 0), evt)}}>Add Story</TextButton>
+                <TextButton
+                  onClick={evt => {
+                    addStory(
+                      item._id,
+                      item.stories?.length ? item.stories.length : 0,
+                      evt,
+                    );
+                  }}
+                >
+                  Add Story
+                </TextButton>
               </InputWrapper>
 
               {item._id > 0 ? (

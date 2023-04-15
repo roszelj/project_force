@@ -33,34 +33,32 @@ function* loadProposals() {
 
   //const data = user.currentUser.role == 'user'
 
-  let client_data:any = null;
-  let admin_data:any = null;
+  let client_data: any = null;
+  let admin_data: any = null;
 
+  const proposalRef = collection(firestore, FirebaseConfig.DATASOURCE);
 
-  const proposalRef =  collection(firestore, FirebaseConfig.DATASOURCE)
-
-  switch(user.currentUser.role) {
-
+  switch (user.currentUser.role) {
     //  where('client_uid', '==', user.currentUser.uid),
 
     case 'user':
       //PROPOSALS THAT THE USER IS THE CLIENT
-     
-     
-      client_data = query(proposalRef,
-      
+
+      client_data = query(
+        proposalRef,
+
         where('client_uid', '==', user.currentUser.uid),
-         
+
         orderBy('createdOn', 'desc'),
       );
 
-      admin_data = query(proposalRef,
-      
+      admin_data = query(
+        proposalRef,
+
         where('admin_uid', '==', user.currentUser.uid),
-      
+
         orderBy('createdOn', 'desc'),
       );
-
 
       const admin_querySnapshot: any[] = yield call(getDocs, admin_data);
       const client_querySnapshot: any[] = yield call(getDocs, client_data);
@@ -68,7 +66,7 @@ function* loadProposals() {
       admin_querySnapshot.forEach(doc => {
         doc.data().id ? databaseInfo.push(doc.data()) : null;
       });
-    
+
       client_querySnapshot.forEach(doc => {
         doc.data().id ? databaseInfo.push(doc.data()) : null;
       });
@@ -76,9 +74,7 @@ function* loadProposals() {
       break;
 
     case 'sa':
-      const sa_data = query(proposalRef,
-        orderBy('createdOn', 'desc'),
-      );
+      const sa_data = query(proposalRef, orderBy('createdOn', 'desc'));
 
       const sa_querySnapshot: any[] = yield call(getDocs, sa_data);
 
@@ -87,15 +83,11 @@ function* loadProposals() {
       });
 
       break;
-      
-    default: 
+
+    default:
       break;
-
   }
-     
 
-
-  
   /*
     const f = databaseInfo.findIndex((ele) => {
       (ele.createdOn ? ele.createdOn = ele.createdOn.toDate().toLocaleString(): null)

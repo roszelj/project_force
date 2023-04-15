@@ -20,7 +20,6 @@ import { ProposalItem } from 'app/components/Proposal/view/item/ProposalItem';
 import { SaveCurrentRoute } from 'app/components/SaveCurrentRoute';
 import { NavBar } from 'app/components/NavBar';
 
-
 interface Props {}
 
 export function LandingPage(props: Props) {
@@ -41,8 +40,6 @@ export function LandingPage(props: Props) {
 
   return (
     <PageWrapper>
-
-
       {isLoading && <LoadingIndicator />}
       {data.map((item, index) => (
         <ProposalItem

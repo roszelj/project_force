@@ -64,10 +64,8 @@ export function LoginForm(props: Props) {
       navigate('/');
     }
   } else if (
-    loginData.currentUser.uid > '' &&
-    loginData.currentUser.role == 'sa' ||
-    loginData.currentUser.uid > '' &&
-    loginData.currentUser.role == 'admin'
+    (loginData.currentUser.uid > '' && loginData.currentUser.role == 'sa') ||
+    (loginData.currentUser.uid > '' && loginData.currentUser.role == 'admin')
   ) {
     if (!!loginData.currentUser.redirect) {
       navigate(loginData.currentUser.redirect);
