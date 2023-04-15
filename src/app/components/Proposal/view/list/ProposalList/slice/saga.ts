@@ -31,23 +31,71 @@ function* loadProposals() {
   //const data: ProposalListState[] = yield query(collection(firestore, 'test_data'));
   const databaseInfo: any[] = [];
 
-  const data =
-    user.currentUser.role == 'user'
-      ? query(
-          collection(firestore, FirebaseConfig.DATASOURCE),
-          where('uid', '==', user.currentUser.uid),
-          orderBy('createdOn', 'desc'),
-        )
-      : query(
-          collection(firestore, FirebaseConfig.DATASOURCE),
-          orderBy('createdOn', 'desc'),
-        );
+  //const data = user.currentUser.role == 'user'
 
-  const querySnapshot: any[] = yield call(getDocs, data);
+  let client_data:any = null;
+  let admin_data:any = null;
 
-  querySnapshot.forEach(doc => {
-    doc.data().id ? databaseInfo.push(doc.data()) : null;
-  });
+
+  const proposalRef =  collection(firestore, FirebaseConfig.DATASOURCE)
+
+  switch(user.currentUser.role) {
+
+    //  where('client_uid', '==', user.currentUser.uid),
+
+    case 'user':
+      //PROPOSALS THAT THE USER IS THE CLIENT
+     
+     
+      client_data = query(proposalRef,
+      
+        where('client_uid', '==', user.currentUser.uid),
+         
+        orderBy('createdOn', 'desc'),
+      );
+
+      admin_data = query(proposalRef,
+      
+        where('admin_uid', '==', user.currentUser.uid),
+      
+        orderBy('createdOn', 'desc'),
+      );
+
+
+      const admin_querySnapshot: any[] = yield call(getDocs, admin_data);
+      const client_querySnapshot: any[] = yield call(getDocs, client_data);
+
+      admin_querySnapshot.forEach(doc => {
+        doc.data().id ? databaseInfo.push(doc.data()) : null;
+      });
+    
+      client_querySnapshot.forEach(doc => {
+        doc.data().id ? databaseInfo.push(doc.data()) : null;
+      });
+
+      break;
+
+    case 'sa':
+      const sa_data = query(proposalRef,
+        orderBy('createdOn', 'desc'),
+      );
+
+      const sa_querySnapshot: any[] = yield call(getDocs, sa_data);
+
+      sa_querySnapshot.forEach(doc => {
+        doc.data().id ? databaseInfo.push(doc.data()) : null;
+      });
+
+      break;
+      
+    default: 
+      break;
+
+  }
+     
+
+
+  
   /*
     const f = databaseInfo.findIndex((ele) => {
       (ele.createdOn ? ele.createdOn = ele.createdOn.toDate().toLocaleString(): null)

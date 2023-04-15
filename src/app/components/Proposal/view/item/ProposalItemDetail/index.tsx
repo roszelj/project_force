@@ -57,8 +57,8 @@ import { SaveCurrentRoute } from 'app/components/SaveCurrentRoute';
 import { TabNaviation } from 'app/components/Proposal/TabNavigation';
 import Grid from '@mui/material/Grid';
 import { themes } from 'styles/theme/themes';
-
-import { purple } from '@mui/material/colors';
+import { EpicMenu } from 'app/components/Proposal/EpicMenu';
+import { StoriesAccordion } from 'app/components/Proposal/StoriesAccordion';
 
 import 'styles/stripe.css';
 
@@ -335,7 +335,24 @@ export function ProposalItemDetail({ id }: Props) {
 
                       {' ' + detail.item_estimation}
                     </Div>
+                    {detail.stories?.length ? (
+                      <div>
+                      <Divider
+                role="presentation"
+                component="div"
+                sx={{ textAlign: 'left' }}
+              >
+                <Typography variant="h6" color="primary">
+                  Stories
+                </Typography>
+              </Divider>
+                      <StoriesAccordion stories={detail.stories}/>
+                      </div>
+                    ) : null}
                   </CardContent>
+                  <Box sx={{ textAlign: 'right' }}>
+                    <EpicMenu epicId={count} />
+                  </Box>
                 </Card>
                 <Div>&nbsp;</Div>
               </Box>
@@ -499,6 +516,16 @@ export function ProposalItemDetail({ id }: Props) {
             </Box>
           </Paper>
         </Box>
+        {loginData.currentUser.uid === data.admin_uid ? (
+          <Div>
+          <Button
+            onClick={() => navigate('/admin/proposal/' + id + '/edit')}
+          >
+            Edit
+          </Button>
+        </Div>
+        ): null}
+        
         <Modal
           open={checkoutOpen}
           onClose={handleCheckoutClose}

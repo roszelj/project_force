@@ -65,6 +65,8 @@ export function LoginForm(props: Props) {
     }
   } else if (
     loginData.currentUser.uid > '' &&
+    loginData.currentUser.role == 'sa' ||
+    loginData.currentUser.uid > '' &&
     loginData.currentUser.role == 'admin'
   ) {
     if (!!loginData.currentUser.redirect) {

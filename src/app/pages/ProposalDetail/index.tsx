@@ -12,11 +12,12 @@ import { PageWrapper } from 'app/components/PageWrapper';
 import { TextButton } from 'app/components/TextButton';
 import { ProposalItemDetail } from 'app/components/Proposal/view/item/ProposalItemDetail';
 
+
 interface Props {}
 
 export function ProposalDetail(props: Props) {
   let { id } = useParams();
-  let navigate = useNavigate();
+  //let navigate = useNavigate();
 
   return (
     <>
@@ -30,13 +31,7 @@ export function ProposalDetail(props: Props) {
       <NavBar />
       <PageWrapper>
         <ProposalItemDetail id={id} />
-        <Div>
-          <TextButton
-            onClick={() => navigate('/admin/proposal/' + id + '/edit')}
-          >
-            Edit
-          </TextButton>
-        </Div>
+
       </PageWrapper>
     </>
   );

@@ -19,6 +19,7 @@ import {
   where,
   doc,
   setDoc,
+  getDoc,
   addDoc,
   serverTimestamp,
 } from 'firebase/firestore';
@@ -40,6 +41,7 @@ export function* authUser() {
   const userCreds: any = yield select(selectLogin);
 
   try {
+
     yield call(setPersistence, auth, browserSessionPersistence);
 
     const userCredential: any = yield call(
@@ -54,38 +56,56 @@ export function* authUser() {
       userCredential._tokenResponse.refreshToken,
     );
 
-    //if (userCredential.user?.length > 0) {
     const userJson = userCredential.user.toJSON();
 
-    if (userCredential.user.email == 'justin@zellebook.com') {
-      userJson.role = 'admin';
-    } else {
-      userJson.role = 'user';
-    }
-    yield put(actions.loadUser(userJson));
+    const userRef = doc(firestore, "users", userCredential.user.uid);
 
-    // }
+    console.log(userCredential.user.uid);
+    const docSnap: any = yield call(getDoc, userRef);
+
+    userJson.role = docSnap.data().role;
+
+
+    yield put(actions.loadUser(userJson));
   } catch (err: any) {
-    //console.log(err.message);
-    //const errorCode = err.code;
-    //const errorMessage = err.message;
+
     yield put(actions.authError(err.message));
   }
-  /*
-  .then(userCredential => {
-    // Signed in
-    const user = userCredential.user;
-    console.log(user);
+ 
+}
 
-    dispatch(actions.loadUser(user));
-   
-    // ...
-  })
-  .catch(error => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-  });
-  */
+export function* reAuthUser() {
+  yield delay(500);
+
+  const firebaseConfig = {
+    apiKey: 'AIzaSyA5I85nn7BCYHw3LeQtrHt5fswzAiUaAjU',
+    authDomain: 'proposal-generator-f87ad.firebaseapp.com',
+    projectId: 'proposal-generator-f87ad',
+    storageBucket: 'proposal-generator-f87ad.appspot.com',
+    messagingSenderId: '502781870081',
+    appId: '1:502781870081:web:eb65653443223a4a238000',
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const user: any = yield select(selectLogin);
+
+  try {
+
+    const userRef = doc(firestore, "users", user.currentUser.uid);
+
+    const docSnap: any = yield call(getDoc, userRef);
+
+    const data = {...user.currentUser, role: docSnap.data().role};
+
+    yield put(actions.loadUser(data));
+
+  } catch (err: any) {
+    const errorCode = err.code;
+    const errorMessage = err.message;
+    yield put(actions.authError(err.message));
+  }
 }
 
 export function* resetPassword() {
@@ -144,7 +164,7 @@ export function* registerUser() {
     yield call(
       setDoc,
       userRef,
-      { name: userInfo.name, company: userInfo.company },
+      { name: userInfo.name, company: userInfo.company, role:'user'},
       { merge: true },
     );
 
@@ -159,15 +179,10 @@ export function* registerUser() {
     let databaseInfo: any = {};
 
     querySnapshot.forEach(item => {
-      // doc.data() is never undefined for query doc snapshots
-      //console.log(doc.id, " => ", doc.data());
 
       const docRef = doc(firestore, FirebaseConfig.DATASOURCE, item.id);
 
-      setDoc(docRef, { uid: userCredential.user.uid }, { merge: true });
-
-      //databaseInfo = doc.data();
-      //databaseInfo.docId = doc.id;
+      setDoc(docRef, { client_uid: userCredential.user.uid }, { merge: true });
     });
   } catch (err: any) {
     const errorCode = err.code;
@@ -179,9 +194,10 @@ export function* registerUser() {
 }
 
 export function* loginSaga() {
-  // yield takeLatest(actions.someAction.type,
   yield takeLatest(actions.loginUser.type, authUser);
   yield takeLatest(actions.registerUserLoad.type, registerUser);
   yield takeLatest(actions.registered.type, authUser);
   yield takeLatest(actions.forgotPassword.type, resetPassword);
+  yield takeLatest(actions.refreshUser.type, reAuthUser);
+
 }

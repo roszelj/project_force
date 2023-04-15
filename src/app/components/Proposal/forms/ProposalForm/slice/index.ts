@@ -31,7 +31,12 @@ export const initialState: ProposalFormState = {
     status: 'open',
     terms: '',
     accepted_terms: false,
-    project_items: [],
+    client_uid: '',
+    admin_uid: '',
+    project_items: [{
+      stories:[]
+    }
+    ],
   },
 };
 
@@ -45,7 +50,7 @@ const slice = createSlice({
     },
     update(state, action: PayloadAction<any>) {
       state.proposal[action.payload.field] = action.payload.value;
-      state.proposal.project_balance = state.proposal.price;
+      state.proposal.project_balance = Number(state.proposal.price);
     },
     loadProposalItem(state, action: PayloadAction<any>) {
       state.proposal = action.payload;
@@ -58,15 +63,46 @@ const slice = createSlice({
 
       f[action.payload.name] = action.payload.value;
     },
+    updateProjectItemStory(state, action: PayloadAction<any>) {
+      const f = state.proposal.project_items.find(
+        ele => ele._id === action.payload.item_id,
+      );
+
+      const g = f.stories.find(
+        ele => ele._id === action.payload._id
+      )
+
+      g[action.payload.name] = action.payload.value;
+    },
     addNewProjectItem(state, action: PayloadAction<any>) {
       const { _id, item } = action.payload;
       state.proposal.project_items.push(action.payload);
+    },
+    addNewProjectItemStory(state, action: PayloadAction<any>) {
+      const { _id, title, description } = action.payload;
+      const f = state.proposal.project_items.find(
+        ele => ele._id === action.payload.item_id,
+      );
+      const items = (({ _id, title, description, points, status, type, created_on }) => ({ _id, title, description, points, status, type, created_on}))(action.payload);
+      f.stories.push(items);
     },
     removeProjectItem(state, action: PayloadAction<any>) {
       const f = state.proposal.project_items.filter(
         f => f._id !== action.payload,
       );
       state.proposal.project_items = f;
+    },
+    removeProjectItemStory(state, action: PayloadAction<any>) {
+      const f = state.proposal.project_items.find(
+        ele => ele._id === action.payload.item_id,
+      );
+
+      const g = f.stories.filter(
+        ele => ele._id !== action.payload.story_id,
+      );
+
+      f.stories = g;
+
     },
     saveProposal(state, action: PayloadAction<any>) {
       state.proposal.updatedOn = formatToISO();

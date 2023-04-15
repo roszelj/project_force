@@ -15,7 +15,7 @@ export const Select = styled.select`
   border-radius: 4px;
   color: ${p => p.theme.text};
   display: block;
-  width: 100%;
+  width: 35%;
   font-size: 1rem;
   font-weight: 500;
   line-height: 1.5;

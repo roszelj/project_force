@@ -143,6 +143,7 @@ exports.addPaymentDetail = functions.https.onRequest(async (req, res) => {
               deposit_status: 'Paid',
               project_balance: Number(status.data().project_balance) - amount,
               payment_history: list,
+              accepted_terms: true,
             },
             { merge: true },
           );
@@ -192,8 +193,10 @@ exports.addPaymentDetail = functions.https.onRequest(async (req, res) => {
           .set(
             {
               payment_history: list,
-              project_balance: status.data().project_balance.toFixed(2) - amount.toFixed(2),
+              project_balance:
+                status.data().project_balance.toFixed(2) - amount.toFixed(2),
               payment_current_installment: installment,
+              accepted_terms: true,
             },
             { merge: true },
           );

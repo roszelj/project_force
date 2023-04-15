@@ -47,13 +47,18 @@ export function App() {
         let data: any = user.toJSON();
 
         if (typeof data.email != 'undefined') {
+          console.log('logged in');
+          /*
           if (data.email == 'justin@zellebook.com') {
             data.role = 'admin';
             data.redirect = sessionStorage.getItem('last_path');
           } else {
             data.role = 'user';
-          }
-          dispatch(actions.loadUser(data));
+          }*/
+
+          data.redirect = sessionStorage.getItem('last_path');
+
+          dispatch(actions.refreshUser(data));
         }
       } else {
         console.log('not logged');
@@ -102,8 +107,13 @@ export function App() {
               redirectPath="/"
               state={{ from: location }}
               isAllowed={
+                /*
+                !!loginData.currentUser.uid &&
+                loginData.currentUser.role === 'sa' || 
                 !!loginData.currentUser.uid &&
                 loginData.currentUser.role === 'admin'
+                */
+                !!loginData.currentUser.uid
               }
             />
           }
@@ -126,7 +136,7 @@ export function App() {
           <Route path="/proposal">
             <Route path=":id" element={<ProposalDetail />} />
           </Route>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<HomePage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

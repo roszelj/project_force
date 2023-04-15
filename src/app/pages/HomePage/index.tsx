@@ -13,9 +13,9 @@ import { SaveCurrentRoute } from 'app/components/SaveCurrentRoute';
 // 9.) Setup email cloud function for (version changes, and comments, and payments)
 // 11.) Add in comments feature for both client and me
 // 14.) Add auto versioning when a proposal is changed/editied
-// 15.) Finish the payment schedule logic and display and prompt future payments
-// 16.) Add in the Objective summary fields
-// 17.) Fix whatever is wrong with stripe checkout form on validation
+// 15.) (X) Finish the payment schedule logic and display and prompt future payments
+// 16.) (X) Add in the Objective summary fields
+// 17.) (X) Fix whatever is wrong with stripe checkout form on validation
 // 19.) Build a better way to handle all the spread out firebase config
 
 export function HomePage() {

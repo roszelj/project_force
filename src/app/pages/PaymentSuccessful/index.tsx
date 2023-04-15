@@ -26,8 +26,6 @@ export function PaymentSuccessful(props: Props) {
   const isLoading = useSelector(selectLoading);
   let navigate = useNavigate();
 
-  
-  
   const getPaymentIntent = async () => {
     const stripe: any = await loadStripe(
       'pk_test_51MmOC6JNye0CcGyXNFquJ8DEUDOU6hfFCpDo1CrO8NTlFMWx2jn5dZuJllMaclEKV3LiTWUd6vhLNQcn3MDF1ydX00siPhyDMH',
@@ -102,7 +100,7 @@ export function PaymentSuccessful(props: Props) {
   useRunOnce({
     fn: () => {
       getPaymentIntent();
-    }
+    },
   });
 
   return (
