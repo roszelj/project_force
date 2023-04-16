@@ -60,6 +60,7 @@ import { themes } from 'styles/theme/themes';
 import { EpicMenu } from 'app/components/Proposal/EpicMenu';
 import { StoriesAccordion } from 'app/components/Proposal/StoriesAccordion';
 import { EpicEditModal } from 'app/components/EpicEditModal';
+import { StoryEditModal } from 'app/components/StoryEditModal';
 
 import 'styles/stripe.css';
 
@@ -75,6 +76,9 @@ export function ProposalItemDetail({ id }: Props) {
   const [termsNameError, setTermsNameError] = useState(false);
 
   const epicEditRef: any = useRef();
+
+  const storyEditRef: any = useRef();
+
 
   const loginData = useSelector(selectLogin);
 
@@ -189,6 +193,12 @@ export function ProposalItemDetail({ id }: Props) {
   const handleEditEpic = epicId => {
     epicEditRef.current.openModal(data.project_items[epicId]);
   };
+
+  const handleEditStory = (storyData,epicId) => {
+    storyEditRef.current.openModal(storyData,epicId);
+   
+  };
+
 
   const appearance = {
     theme: 'night',
@@ -340,7 +350,7 @@ export function ProposalItemDetail({ id }: Props) {
                             Stories
                           </Typography>
                         </Divider>
-                        <StoriesAccordion stories={detail.stories} />
+                        <StoriesAccordion handleEditStory={handleEditStory} epicId={detail._id} stories={detail.stories} />
                       </div>
                     ) : null}
                   </CardContent>
@@ -573,6 +583,7 @@ export function ProposalItemDetail({ id }: Props) {
           </ModalStyle>
         </Modal>
         <EpicEditModal ref={epicEditRef} />
+        <StoryEditModal ref={storyEditRef} />
       </ThemeProvider>
 
       <SaveCurrentRoute />

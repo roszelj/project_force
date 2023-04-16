@@ -166,7 +166,7 @@ export function RegisterForm(props: Props) {
 
   return (
     <>
-      <FormGroup id="register" onSubmit={onSubmitForm}>
+      <FormGroup id="register" onSubmit={onSubmitForm} autoComplete="off">
         <FormLabel>
           * Email{' '}
           {errorFields['email']?.length ? (
@@ -177,6 +177,7 @@ export function RegisterForm(props: Props) {
         </FormLabel>
         <InputWrapper>
           <Input
+          
             id="email"
             type="text"
             placeholder="email"

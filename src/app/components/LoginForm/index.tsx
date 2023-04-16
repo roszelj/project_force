@@ -127,7 +127,7 @@ export function LoginForm(props: Props) {
 
   return (
     <>
-      <FormGroup id="login" onSubmit={onSubmitForm}>
+      <FormGroup id="login" onSubmit={onSubmitForm} autoComplete="off">
         <FormLabel>Email</FormLabel>
         <InputWrapper>
           <Input id="email" type="text" placeholder="" name="email" />

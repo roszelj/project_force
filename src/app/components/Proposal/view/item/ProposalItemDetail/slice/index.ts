@@ -43,6 +43,19 @@ const slice = createSlice({
       f.item_estimation = action.payload.item_estimation;
       f.updated_on = formatToISO();
     },
+    updateProjectItemStory(state, action: PayloadAction<any>) {
+      const f = state.proposal.project_items.find(
+        ele => ele._id === action.payload.epic_id,
+      );
+
+      const g = f.stories.find(ele => ele._id === action.payload._id);
+
+      g.title = action.payload.title;
+      g.description = action.payload.description;
+      g.points = action.payload.points;
+      g.status = action.payload.status;
+      g.updated_on = formatToISO();
+    },
   },
 });
 

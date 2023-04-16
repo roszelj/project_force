@@ -76,9 +76,29 @@ function* updateProjectItem() {
   }
 }
 
+function* updateProjectStory() {
+  yield delay(500);
+
+  try {
+    const data: any = yield select(selectProposalDetail);
+
+    const docRef = doc(firestore, FirebaseConfig.DATASOURCE, data.docId);
+
+    yield call(
+      setDoc,
+      docRef,
+      { project_items: data.project_items},
+      { merge: true },
+    );
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 export function* proposalDetailSaga() {
   yield takeLatest(actions.getProposal.type, loadProposal);
   yield takeLatest(actions.acceptTerms.type, acceptedTerms);
   yield takeLatest(actions.updateProjectItem.type, updateProjectItem);
+  yield takeLatest(actions.updateProjectItemStory.type, updateProjectStory);
 
 }
