@@ -17,9 +17,11 @@ import { useTheme } from '@mui/material/styles';
 interface Props {
   epicId: any;
   handleEditEpic: any;
+  handleAddStory: any;
+  totalStories: any;
 }
 
-export function EpicMenu({ epicId, handleEditEpic }: Props) {
+export function EpicMenu({ epicId, handleAddStory, totalStories, handleEditEpic }: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
@@ -28,6 +30,11 @@ export function EpicMenu({ epicId, handleEditEpic }: Props) {
   };
   const handleEdit = () => {
     handleEditEpic(epicId);
+    setAnchorEl(null);
+  };
+
+  const handleNewStory = () => {
+    handleAddStory(epicId,totalStories);
     setAnchorEl(null);
   };
 
@@ -69,6 +76,7 @@ export function EpicMenu({ epicId, handleEditEpic }: Props) {
         TransitionComponent={Fade}
       >
         <MenuItem onClick={handleEdit}>Add Comment</MenuItem>
+        <MenuItem onClick={handleNewStory}>Add Story</MenuItem>
         <MenuItem onClick={handleEdit}>Edit</MenuItem>
       </Menu>
     </div>

@@ -80,6 +80,7 @@ export function ProposalItemDetail({ id }: Props) {
   const storyEditRef: any = useRef();
 
 
+
   const loginData = useSelector(selectLogin);
 
   let navigate = useNavigate();
@@ -196,6 +197,12 @@ export function ProposalItemDetail({ id }: Props) {
 
   const handleEditStory = (storyData,epicId) => {
     storyEditRef.current.openModal(storyData,epicId);
+   
+  };
+
+  const handleAddStory = (epicId,totalStories) => {
+    const nextId = totalStories + 1;
+    storyEditRef.current.openModal(null,epicId,nextId);
    
   };
 
@@ -358,6 +365,8 @@ export function ProposalItemDetail({ id }: Props) {
                     <EpicMenu
                       handleEditEpic={handleEditEpic}
                       epicId={detail._id}
+                      totalStories={detail.stories?.length}
+                      handleAddStory={handleAddStory}
                     />
                   </Box>
                 </Card>

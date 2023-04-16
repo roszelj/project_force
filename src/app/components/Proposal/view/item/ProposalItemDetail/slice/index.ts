@@ -54,7 +54,35 @@ const slice = createSlice({
       g.description = action.payload.description;
       g.points = action.payload.points;
       g.status = action.payload.status;
+      g.type = action.payload.type;
       g.updated_on = formatToISO();
+    },
+
+    addNewProjectItemStory(state, action: PayloadAction<any>) {
+      const f = state.proposal.project_items.find(
+        ele => ele._id === action.payload.epic_id,
+      );
+      const items = (({
+        _id,
+        title,
+        description,
+        points,
+        status,
+        type,
+        created_on,
+      }) => ({ _id, title, description, points, status, type, created_on }))(
+        action.payload,
+      );
+      f.stories.push(items);
+    },
+    removeProjectItemStory(state, action: PayloadAction<any>) {
+      const f = state.proposal.project_items.find(
+        ele => ele._id === action.payload.epic_id,
+      );
+
+      const g = f.stories.filter(ele => ele._id !== action.payload.story_id);
+
+      f.stories = g;
     },
   },
 });

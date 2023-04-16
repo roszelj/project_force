@@ -81,7 +81,7 @@ function* updateProjectStory() {
 
   try {
     const data: any = yield select(selectProposalDetail);
-
+    
     const docRef = doc(firestore, FirebaseConfig.DATASOURCE, data.docId);
 
     yield call(
@@ -100,5 +100,12 @@ export function* proposalDetailSaga() {
   yield takeLatest(actions.acceptTerms.type, acceptedTerms);
   yield takeLatest(actions.updateProjectItem.type, updateProjectItem);
   yield takeLatest(actions.updateProjectItemStory.type, updateProjectStory);
+  yield takeLatest(actions.addNewProjectItemStory.type, updateProjectStory);
+  yield takeLatest(actions.removeProjectItemStory.type, updateProjectStory);
+
+
+  
+
+  
 
 }

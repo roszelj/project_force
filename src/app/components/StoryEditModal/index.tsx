@@ -16,6 +16,12 @@ import { useTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { useForm, Controller } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { useProposalDetailSlice } from 'app/components/Proposal/view/item/ProposalItemDetail/slice';
+import { formatToISO } from 'utils/firestoreDateUtil';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 interface Props {}
 
@@ -30,25 +36,39 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
     formState: { errors },
   } = useForm();
 
-  const initialState = {
+  const storyInitialState = {
     epic_id: '',
     title: '',
     description: '',
     points: '',
     status: '',
     _id: '',
+    type: '',
+    created_on: '',
   };
 
+  const initialState = false;
+
   const [storyEditOpen, setStoryEditOpen] = React.useState(false);
-  const [story, setStory] = React.useState(initialState);
+  const [story, setStory] = React.useState(storyInitialState);
   const [epicId, setEpicId] = React.useState();
+  const [editing, setEditing] = React.useState(false);
+  const [nextId, setNextId] = React.useState(initialState);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
   const { actions } = useProposalDetailSlice();
+
 
   const dispatch = useDispatch();
 
   React.useImperativeHandle(ref, () => ({
-    openModal(storyData,epicId) {
-      setStory(storyData);
+    openModal(storyData,epicId,nextId) {
+      if(storyData){
+        setStory(storyData);
+        setEditing(true);
+      }else{
+        setNextId(nextId);
+      }
       setEpicId(epicId);
       setStoryEditOpen(true);
     },
@@ -56,7 +76,26 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
 
   const handleClose = () => {
     setStoryEditOpen(false);
+    setNextId(initialState);
+    setEditing(false);
+    setStory(storyInitialState);
     reset();
+  };
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleDialogYes = () => {
+
+    dispatch(actions.removeProjectItemStory({story_id: story._id, epic_id: epicId}));
+
+    handleClose();
+    setDialogOpen(false);
   };
 
   const theme = useTheme();
@@ -104,19 +143,49 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
     },
   ];
 
+  const type= [
+    {
+    value: 'user',
+    label: 'User Story - (Small Piece of Desired Functionality)'
+    },
+    {
+      value: 'enabler - infra',
+      label: 'Enabler Story - (Infrastructure)'
+    },
+    {
+      value: 'enabler - arch',
+      label: 'Enabler Story - (Architecture)'
+    },
+    {
+      value: 'enabler - explor',
+      label: 'Enabler Story - (Exploration)'
+    },
+    {
+      value: 'enanbler - comp',
+      label: 'Enabler Story - (Compliance)'
+    },
+    {
+      value: 'bug',
+      label: 'Bug'
+    },
+  ];
+
   const onSubmit = (data) => {
     const hasErrors = Object.values(errors).flat().length > 0;
     if(!hasErrors){
       const new_item = {
         epic_id: epicId,
-        _id: story._id,
+        _id: (nextId ? nextId : story._id),
         title: data.title,
         description: data.description,
-        points: data.points,
-        status: data.status
+        type: data.type,
+        points: Number(data.points),
+        status: data.status,
+        created_on: (nextId ? formatToISO() : story.created_on)
       };
 
-      dispatch(actions.updateProjectItemStory(new_item));
+      (editing ? dispatch(actions.updateProjectItemStory(new_item)) : dispatch(actions.addNewProjectItemStory(new_item)));
+
       handleClose();
     }
   }
@@ -173,8 +242,25 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
               required={true}
               defaultValue={story.status}
               {...register('status', { required: true })}
+              error={errors.status ? true : false}
             >
               {status.map((option, index) => (
+                <MenuItem key={index} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+              select
+              label="Type"
+              variant="outlined"
+              required={true}
+              defaultValue={story.type}
+              {...register('type', { required: true })}
+              error={errors.type ? true : false}
+            >
+              {type.map((option, index) => (
                 <MenuItem key={index} value={option.value}>
                   {option.label}
                 </MenuItem>
@@ -190,7 +276,13 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
               {...register('points', { required: true })}
               error={errors.points ? true : false}
             />
-
+            {editing ? (
+              <Box display="flex" justifyContent="right"
+              alignItems="right">
+                <Button variant="text" color="secondary" size="small" onClick={handleDialogOpen}>Delete</Button>
+            </Box>
+            ): null}
+            
             <Box
               display="flex"
               m={2}
@@ -203,6 +295,27 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
             </Box>
           </div>
         </Box>
+        <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Delete this store?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this story. Once it's deleted it's gone for good.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>No</Button>
+          <Button onClick={handleDialogYes} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
       </ModalStyle>
     </Modal>
   );
