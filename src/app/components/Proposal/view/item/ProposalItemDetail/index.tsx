@@ -57,10 +57,16 @@ import { SaveCurrentRoute } from 'app/components/SaveCurrentRoute';
 import { TabNaviation } from 'app/components/Proposal/TabNavigation';
 import Grid from '@mui/material/Grid';
 import { themes } from 'styles/theme/themes';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 import { EpicMenu } from 'app/components/Proposal/EpicMenu';
 import { StoriesAccordion } from 'app/components/Proposal/StoriesAccordion';
 import { EpicEditModal } from 'app/components/EpicEditModal';
 import { StoryEditModal } from 'app/components/StoryEditModal';
+import { AssetManager } from 'app/components/AssetManager';
 
 import 'styles/stripe.css';
 
@@ -78,8 +84,6 @@ export function ProposalItemDetail({ id }: Props) {
   const epicEditRef: any = useRef();
 
   const storyEditRef: any = useRef();
-
-
 
   const loginData = useSelector(selectLogin);
 
@@ -103,7 +107,6 @@ export function ProposalItemDetail({ id }: Props) {
 
   useEffectOnMount(() => {
     dispatch(actions.getProposal(id));
-    
   });
 
   const [checkoutOpen, setCheckoutOpen] = React.useState(false);
@@ -195,17 +198,14 @@ export function ProposalItemDetail({ id }: Props) {
     epicEditRef.current.openModal(data.project_items[epicId]);
   };
 
-  const handleEditStory = (storyData,epicId) => {
-    storyEditRef.current.openModal(storyData,epicId);
-   
+  const handleEditStory = (storyData, epicId) => {
+    storyEditRef.current.openModal(storyData, epicId);
   };
 
-  const handleAddStory = (epicId,totalStories) => {
+  const handleAddStory = (epicId, totalStories) => {
     const nextId = totalStories + 1;
-    storyEditRef.current.openModal(null,epicId,nextId);
-   
+    storyEditRef.current.openModal(null, epicId, nextId);
   };
-
 
   const appearance = {
     theme: 'night',
@@ -301,30 +301,30 @@ export function ProposalItemDetail({ id }: Props) {
               <Box key={count}>
                 <Card>
                   <CardContent>
-                    
-
-
                     <Stack
-              direction="row"
-              justifyContent="flex-start"
-              alignItems="flex-start"
-              spacing={2}
-              sx={{ width: '100%' }}
-            >
-              <Typography
-                      gutterBottom
-                      variant="h5"
-                      color="primary"
-                      component="div"
-                      sx={{ width: '75%', flexShrink: 0}}
+                      direction="row"
+                      justifyContent="flex-start"
+                      alignItems="flex-start"
+                      spacing={2}
+                      sx={{ width: '100%' }}
                     >
-                      {detail.item_title}
-                    </Typography>
-              <Typography sx={{ width: '100%', textAlign: 'right' }} variant="body2" color="secondary">
-                {detail.status}
-              </Typography>
-            </Stack>
-                
+                      <Typography
+                        gutterBottom
+                        variant="h5"
+                        color="primary"
+                        component="div"
+                        sx={{ width: '75%', flexShrink: 0 }}
+                      >
+                        {detail.item_title}
+                      </Typography>
+                      <Typography
+                        sx={{ width: '100%', textAlign: 'right' }}
+                        variant="body2"
+                        color="secondary"
+                      >
+                        {detail.status}
+                      </Typography>
+                    </Stack>
 
                     <Typography
                       variant="body2"
@@ -357,9 +357,37 @@ export function ProposalItemDetail({ id }: Props) {
                             Stories
                           </Typography>
                         </Divider>
-                        <StoriesAccordion handleEditStory={handleEditStory} epicId={detail._id} stories={detail.stories} />
+                        <StoriesAccordion
+                          handleEditStory={handleEditStory}
+                          epicId={detail._id}
+                          stories={detail.stories}
+                        />
                       </div>
                     ) : null}
+                    <div>
+                      <Divider
+                        role="presentation"
+                        component="div"
+                        sx={{ textAlign: 'left' }}
+                      ></Divider>
+                      <Accordion>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon color="secondary" />}
+                          aria-controls="panel1a-content"
+                          id="panel1a-header"
+                        >
+                          <Typography variant="h6" color="secondary">
+                            Assets
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails sx={{ padding: '0px' }}>
+                          <AssetManager
+                            docId={data.docId}
+                            epicId={detail._id}
+                          />
+                        </AccordionDetails>
+                      </Accordion>
+                    </div>
                   </CardContent>
                   <Box sx={{ textAlign: 'right' }}>
                     <EpicMenu

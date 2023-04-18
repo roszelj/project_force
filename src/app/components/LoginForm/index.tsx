@@ -20,15 +20,6 @@ import { A } from '../A';
 
 import { useSelector, useDispatch } from 'react-redux';
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyA5I85nn7BCYHw3LeQtrHt5fswzAiUaAjU',
-  authDomain: 'proposal-generator-f87ad.firebaseapp.com',
-  projectId: 'proposal-generator-f87ad',
-  storageBucket: 'proposal-generator-f87ad.appspot.com',
-  messagingSenderId: '502781870081',
-  appId: '1:502781870081:web:eb65653443223a4a238000',
-};
-
 interface Props {}
 
 export function LoginForm(props: Props) {

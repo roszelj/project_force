@@ -21,7 +21,12 @@ interface Props {
   totalStories: any;
 }
 
-export function EpicMenu({ epicId, handleAddStory, totalStories, handleEditEpic }: Props) {
+export function EpicMenu({
+  epicId,
+  handleAddStory,
+  totalStories,
+  handleEditEpic,
+}: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
@@ -34,7 +39,7 @@ export function EpicMenu({ epicId, handleAddStory, totalStories, handleEditEpic 
   };
 
   const handleNewStory = () => {
-    handleAddStory(epicId,totalStories);
+    handleAddStory(epicId, totalStories);
     setAnchorEl(null);
   };
 

@@ -32,7 +32,7 @@ export function StoriesAccordion({ stories, epicId, handleEditStory }: Props) {
       {stories.map((item, count) => (
         <Accordion key={count}>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<ExpandMoreIcon color="secondary" />}
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
@@ -40,7 +40,9 @@ export function StoriesAccordion({ stories, epicId, handleEditStory }: Props) {
               {item.title}
             </Typography>
           </AccordionSummary>
-          <AccordionDetails sx={{ backgroundColor: 'rgb(18, 18, 18)', paddingBottom:"0px" }}>
+          <AccordionDetails
+            sx={{ backgroundColor: 'rgb(18, 18, 18)', paddingBottom: '0px' }}
+          >
             <Typography color="secondary">{item.description}</Typography>
             <Stack
               direction="row"
@@ -54,15 +56,23 @@ export function StoriesAccordion({ stories, epicId, handleEditStory }: Props) {
               </Typography>
               <Divider orientation="vertical" variant="middle" flexItem />
               <Typography sx={{ textAlign: 'center' }} color="secondary">
-               {item.points} pts
+                {item.points} pts
               </Typography>
               <Divider orientation="vertical" variant="middle" flexItem />
               <Typography sx={{ textAlign: 'center' }} color="secondary">
                 {item.type}
               </Typography>
               <Divider orientation="vertical" variant="middle" flexItem />
-              <Typography sx={{ textAlign: 'center'}} color="secondary" >
-                  <Button variant="text" color="primary" onClick={() => {handleEditStory(item,epicId)}}>Edit</Button>
+              <Typography sx={{ textAlign: 'center' }} color="secondary">
+                <Button
+                  variant="text"
+                  color="primary"
+                  onClick={() => {
+                    handleEditStory(item, epicId);
+                  }}
+                >
+                  Edit
+                </Button>
               </Typography>
             </Stack>
           </AccordionDetails>

@@ -58,15 +58,14 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
 
   const { actions } = useProposalDetailSlice();
 
-
   const dispatch = useDispatch();
 
   React.useImperativeHandle(ref, () => ({
-    openModal(storyData,epicId,nextId) {
-      if(storyData){
+    openModal(storyData, epicId, nextId) {
+      if (storyData) {
         setStory(storyData);
         setEditing(true);
-      }else{
+      } else {
         setNextId(nextId);
       }
       setEpicId(epicId);
@@ -91,8 +90,9 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
   };
 
   const handleDialogYes = () => {
-
-    dispatch(actions.removeProjectItemStory({story_id: story._id, epic_id: epicId}));
+    dispatch(
+      actions.removeProjectItemStory({ story_id: story._id, epic_id: epicId }),
+    );
 
     handleClose();
     setDialogOpen(false);
@@ -143,52 +143,54 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
     },
   ];
 
-  const type= [
+  const type = [
     {
-    value: 'user',
-    label: 'User Story - (Small Piece of Desired Functionality)'
+      value: 'user',
+      label: 'User Story - (Small Piece of Desired Functionality)',
     },
     {
       value: 'enabler - infra',
-      label: 'Enabler Story - (Infrastructure)'
+      label: 'Enabler Story - (Infrastructure)',
     },
     {
       value: 'enabler - arch',
-      label: 'Enabler Story - (Architecture)'
+      label: 'Enabler Story - (Architecture)',
     },
     {
       value: 'enabler - explor',
-      label: 'Enabler Story - (Exploration)'
+      label: 'Enabler Story - (Exploration)',
     },
     {
       value: 'enanbler - comp',
-      label: 'Enabler Story - (Compliance)'
+      label: 'Enabler Story - (Compliance)',
     },
     {
       value: 'bug',
-      label: 'Bug'
+      label: 'Bug',
     },
   ];
 
-  const onSubmit = (data) => {
+  const onSubmit = data => {
     const hasErrors = Object.values(errors).flat().length > 0;
-    if(!hasErrors){
+    if (!hasErrors) {
       const new_item = {
         epic_id: epicId,
-        _id: (nextId ? nextId : story._id),
+        _id: nextId ? nextId : story._id,
         title: data.title,
         description: data.description,
         type: data.type,
         points: Number(data.points),
         status: data.status,
-        created_on: (nextId ? formatToISO() : story.created_on)
+        created_on: nextId ? formatToISO() : story.created_on,
       };
 
-      (editing ? dispatch(actions.updateProjectItemStory(new_item)) : dispatch(actions.addNewProjectItemStory(new_item)));
+      editing
+        ? dispatch(actions.updateProjectItemStory(new_item))
+        : dispatch(actions.addNewProjectItemStory(new_item));
 
       handleClose();
     }
-  }
+  };
 
   return (
     <Modal
@@ -277,12 +279,18 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
               error={errors.points ? true : false}
             />
             {editing ? (
-              <Box display="flex" justifyContent="right"
-              alignItems="right">
-                <Button variant="text" color="secondary" size="small" onClick={handleDialogOpen}>Delete</Button>
-            </Box>
-            ): null}
-            
+              <Box display="flex" justifyContent="right" alignItems="right">
+                <Button
+                  variant="text"
+                  color="secondary"
+                  size="small"
+                  onClick={handleDialogOpen}
+                >
+                  Delete
+                </Button>
+              </Box>
+            ) : null}
+
             <Box
               display="flex"
               m={2}
@@ -296,26 +304,27 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
           </div>
         </Box>
         <Dialog
-        open={dialogOpen}
-        onClose={handleDialogClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Delete this store?"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete this story. Once it's deleted it's gone for good.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose}>No</Button>
-          <Button onClick={handleDialogYes} autoFocus>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
+          open={dialogOpen}
+          onClose={handleDialogClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {'Delete this store?'}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to delete this story. Once it's deleted it's
+              gone for good.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose}>No</Button>
+            <Button onClick={handleDialogYes} autoFocus>
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
       </ModalStyle>
     </Modal>
   );
