@@ -1,6 +1,6 @@
 import { take, call, put, select, takeLatest, delay } from 'redux-saga/effects';
 import { loginActions as actions } from '.';
-import { initializeApp } from 'firebase/app';
+//import { initializeApp } from 'firebase/app';
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -9,6 +9,8 @@ import {
   sendPasswordResetEmail,
   createUserWithEmailAndPassword,
 } from 'firebase/auth';
+
+import { useAuth } from 'firebase_setup/firebase';
 import { selectLogin } from './selectors';
 import { FirebaseConfig } from 'firebase_setup/FirestoreConfig';
 
@@ -27,17 +29,8 @@ import { firestore } from 'firebase_setup/firebase';
 
 export function* authUser() {
   yield delay(500);
-  const firebaseConfig = {
-    apiKey: 'AIzaSyA5I85nn7BCYHw3LeQtrHt5fswzAiUaAjU',
-    authDomain: 'proposal-generator-f87ad.firebaseapp.com',
-    projectId: 'proposal-generator-f87ad',
-    storageBucket: 'proposal-generator-f87ad.appspot.com',
-    messagingSenderId: '502781870081',
-    appId: '1:502781870081:web:eb65653443223a4a238000',
-  };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  const auth = useAuth; 
   const userCreds: any = yield select(selectLogin);
 
   try {
@@ -82,8 +75,7 @@ export function* reAuthUser() {
     appId: '1:502781870081:web:eb65653443223a4a238000',
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  const auth = useAuth;
 
   const user: any = yield select(selectLogin);
 
@@ -103,20 +95,10 @@ export function* reAuthUser() {
 }
 
 export function* resetPassword() {
-  const firebaseConfig = {
-    apiKey: 'AIzaSyA5I85nn7BCYHw3LeQtrHt5fswzAiUaAjU',
-    authDomain: 'proposal-generator-f87ad.firebaseapp.com',
-    projectId: 'proposal-generator-f87ad',
-    storageBucket: 'proposal-generator-f87ad.appspot.com',
-    messagingSenderId: '502781870081',
-    appId: '1:502781870081:web:eb65653443223a4a238000',
-  };
 
   const userInfo: any = yield select(selectLogin);
 
-  const app = initializeApp(firebaseConfig);
-
-  const auth = getAuth();
+  const auth = useAuth; 
   try {
     const requestReset: any = yield call(
       sendPasswordResetEmail,
@@ -134,17 +116,7 @@ export function* resetPassword() {
 export function* registerUser() {
   yield delay(500);
 
-  const firebaseConfig = {
-    apiKey: 'AIzaSyA5I85nn7BCYHw3LeQtrHt5fswzAiUaAjU',
-    authDomain: 'proposal-generator-f87ad.firebaseapp.com',
-    projectId: 'proposal-generator-f87ad',
-    storageBucket: 'proposal-generator-f87ad.appspot.com',
-    messagingSenderId: '502781870081',
-    appId: '1:502781870081:web:eb65653443223a4a238000',
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  const auth = useAuth; 
   const userInfo: any = yield select(selectLogin);
 
   try {

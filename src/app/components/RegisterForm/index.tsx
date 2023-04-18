@@ -177,7 +177,6 @@ export function RegisterForm(props: Props) {
         </FormLabel>
         <InputWrapper>
           <Input
-          
             id="email"
             type="text"
             placeholder="email"

@@ -68,7 +68,7 @@ function* updateProjectItem() {
     yield call(
       setDoc,
       docRef,
-      { project_items: data.project_items},
+      { project_items: data.project_items },
       { merge: true },
     );
   } catch (err) {
@@ -81,13 +81,13 @@ function* updateProjectStory() {
 
   try {
     const data: any = yield select(selectProposalDetail);
-    
+
     const docRef = doc(firestore, FirebaseConfig.DATASOURCE, data.docId);
 
     yield call(
       setDoc,
       docRef,
-      { project_items: data.project_items},
+      { project_items: data.project_items },
       { merge: true },
     );
   } catch (err) {
@@ -102,10 +102,4 @@ export function* proposalDetailSaga() {
   yield takeLatest(actions.updateProjectItemStory.type, updateProjectStory);
   yield takeLatest(actions.addNewProjectItemStory.type, updateProjectStory);
   yield takeLatest(actions.removeProjectItemStory.type, updateProjectStory);
-
-
-  
-
-  
-
 }

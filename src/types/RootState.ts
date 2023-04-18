@@ -20,4 +20,5 @@ export interface RootState {
   proposalForm?: ProposalFormState;
   login?: LoginState;
   proposalPayment?: ProposalPaymentState;
-  paymentSchedule?: PaymentScheduleState;}
+  paymentSchedule?: PaymentScheduleState;
+}

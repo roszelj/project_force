@@ -98,21 +98,21 @@ export const EpicEditModal = React.forwardRef((props: Props, ref: any) => {
     },
   ];
 
-  const onSubmit = (data) => {
+  const onSubmit = data => {
     const hasErrors = Object.values(errors).flat().length > 0;
-    if(!hasErrors){
+    if (!hasErrors) {
       const new_item = {
         _id: epic._id,
         item_title: data.item_title,
         description: data.description,
         item_estimation: data.item_estimation,
-        status: data.status
+        status: data.status,
       };
 
       dispatch(actions.updateProjectItem(new_item));
       handleClose();
     }
-  }
+  };
 
   return (
     <Modal
