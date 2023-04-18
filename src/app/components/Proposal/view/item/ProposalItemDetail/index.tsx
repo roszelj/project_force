@@ -381,7 +381,10 @@ export function ProposalItemDetail({ id }: Props) {
                           </Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ padding: '0px' }}>
-                          <AssetManager docId={data.docId} epicId={detail._id} />
+                          <AssetManager
+                            docId={data.docId}
+                            epicId={detail._id}
+                          />
                         </AccordionDetails>
                       </Accordion>
                     </div>

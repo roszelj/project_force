@@ -30,7 +30,7 @@ import { firestore } from 'firebase_setup/firebase';
 export function* authUser() {
   yield delay(500);
 
-  const auth = useAuth; 
+  const auth = useAuth;
   const userCreds: any = yield select(selectLogin);
 
   try {
@@ -95,10 +95,9 @@ export function* reAuthUser() {
 }
 
 export function* resetPassword() {
-
   const userInfo: any = yield select(selectLogin);
 
-  const auth = useAuth; 
+  const auth = useAuth;
   try {
     const requestReset: any = yield call(
       sendPasswordResetEmail,
@@ -116,7 +115,7 @@ export function* resetPassword() {
 export function* registerUser() {
   yield delay(500);
 
-  const auth = useAuth; 
+  const auth = useAuth;
   const userInfo: any = yield select(selectLogin);
 
   try {
