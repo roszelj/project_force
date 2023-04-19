@@ -11,6 +11,9 @@ export const initialState: ProposalDetailState = {
   id: '',
   proposal: {
     project_items: [],
+    invited_contributors: [],
+    contributors: [],
+    invited: [],
   },
 };
 
@@ -83,6 +86,10 @@ const slice = createSlice({
       const g = f.stories.filter(ele => ele._id !== action.payload.story_id);
 
       f.stories = g;
+    },
+    inviteToProject(state, action: PayloadAction<any>) {
+      state.proposal.invited = action.payload;
+      state.proposal.invited.created_on = formatToISO();
     },
   },
 });

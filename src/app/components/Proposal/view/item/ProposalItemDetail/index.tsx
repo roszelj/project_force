@@ -67,6 +67,8 @@ import { StoriesAccordion } from 'app/components/Proposal/StoriesAccordion';
 import { EpicEditModal } from 'app/components/EpicEditModal';
 import { StoryEditModal } from 'app/components/StoryEditModal';
 import { AssetManager } from 'app/components/AssetManager';
+import { ProjectMenu } from 'app/components/ProjectMenu';
+import { InviteModal } from 'app/components/InviteModal';
 
 import 'styles/stripe.css';
 
@@ -84,6 +86,8 @@ export function ProposalItemDetail({ id }: Props) {
   const epicEditRef: any = useRef();
 
   const storyEditRef: any = useRef();
+
+  const inviteRef: any = useRef();
 
   const loginData = useSelector(selectLogin);
 
@@ -207,6 +211,10 @@ export function ProposalItemDetail({ id }: Props) {
     storyEditRef.current.openModal(null, epicId, nextId);
   };
 
+  const handleInvite = () => {
+    inviteRef.current.openModal();
+  };
+
   const appearance = {
     theme: 'night',
   };
@@ -222,10 +230,26 @@ export function ProposalItemDetail({ id }: Props) {
       <ThemeProvider theme={darkTheme}>
         <Box>
           <HeaderCard>
-            <Typography variant="h5" color="secondary">
-              {data.name}
-            </Typography>
+            <Stack
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="baseline"
+              spacing={1}
+              sx={{ width: '100%' }}
+            >
+              <Typography
+                variant="h5"
+                component="div"
+                sx={{ flexGrow: 1, alignItems: 'baseline' }}
+                color="secondary"
+              >
+                {data.name}
+              </Typography>
+
+              <ProjectMenu handleInvite={handleInvite} />
+            </Stack>
           </HeaderCard>
+
           <Paper
             variant="outlined"
             sx={{
@@ -235,12 +259,10 @@ export function ProposalItemDetail({ id }: Props) {
               paddingRight: 3,
             }}
           >
-            <List
-              sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-            >
+            <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
               <ListItem
                 alignItems="flex-start"
-                sx={{ paddingLeft: 0, paddingBottom: 0 }}
+                sx={{ paddingLeft: 0, paddingBottom: 0, paddingRight: 0 }}
               >
                 <ListItemText
                   primary={
@@ -621,6 +643,7 @@ export function ProposalItemDetail({ id }: Props) {
         </Modal>
         <EpicEditModal ref={epicEditRef} />
         <StoryEditModal ref={storyEditRef} />
+        <InviteModal ref={inviteRef} />
       </ThemeProvider>
 
       <SaveCurrentRoute />

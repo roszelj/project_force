@@ -7,6 +7,8 @@ import {
   setDoc,
   query,
   where,
+  collectionGroup,
+  addDoc,
 } from 'firebase/firestore';
 import { FirebaseConfig } from 'firebase_setup/FirestoreConfig';
 import { firestore } from 'firebase_setup/firebase';
@@ -22,6 +24,17 @@ function* loadProposal() {
   );
   const querySnapshot: any = yield call(getDocs, q);
 
+  const contributors = query(collectionGroup(firestore, 'contributors'));
+  const contributor_querySnapshot: any = yield call(getDocs, contributors);
+
+  const InvitedContributors = query(
+    collectionGroup(firestore, 'invited_contributors'),
+  );
+  const contributorInvited_querySnapshot: any = yield call(
+    getDocs,
+    InvitedContributors,
+  );
+
   let databaseInfo: any = {};
 
   querySnapshot.forEach(doc => {
@@ -29,6 +42,18 @@ function* loadProposal() {
     //console.log(doc.id, " => ", doc.data());
     databaseInfo = doc.data();
     databaseInfo.docId = doc.id;
+    databaseInfo.contributors = [];
+    databaseInfo.invited_contributors = [];
+  });
+
+  contributor_querySnapshot.forEach(doc => {
+    console.log(doc.id, ' => ', doc.data());
+    databaseInfo.contributors.push({ docId: doc.id, ...doc.data() });
+  });
+
+  contributorInvited_querySnapshot.forEach(doc => {
+    console.log(doc.id, ' => ', doc.data());
+    databaseInfo.invited_contributors.push({ docId: doc.id, ...doc.data() });
   });
 
   try {
@@ -95,6 +120,26 @@ function* updateProjectStory() {
   }
 }
 
+function* addProjectContributors() {
+  yield delay(500);
+
+  try {
+    const data: any = yield select(selectProposalDetail);
+
+    const docRef = collection(firestore, FirebaseConfig.DATASOURCE);
+
+    const contributorRef = collection(
+      docRef,
+      data.docId,
+      'invited_contributors',
+    );
+
+    yield call(addDoc, contributorRef, { ...data.invited });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 export function* proposalDetailSaga() {
   yield takeLatest(actions.getProposal.type, loadProposal);
   yield takeLatest(actions.acceptTerms.type, acceptedTerms);
@@ -102,4 +147,5 @@ export function* proposalDetailSaga() {
   yield takeLatest(actions.updateProjectItemStory.type, updateProjectStory);
   yield takeLatest(actions.addNewProjectItemStory.type, updateProjectStory);
   yield takeLatest(actions.removeProjectItemStory.type, updateProjectStory);
+  yield takeLatest(actions.inviteToProject.type, addProjectContributors);
 }
