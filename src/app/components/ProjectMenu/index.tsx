@@ -11,14 +11,24 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Fade from '@mui/material/Fade';
 import MenuIcon from '@mui/icons-material/Menu';
+import MoreIcon from '@mui/icons-material/MoreVert';
 import IconButton from '@mui/material/IconButton';
 import { useTheme } from '@mui/material/styles';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface Props {
   handleInvite: any;
+  handleContributors: any;
+  role: any;
+  id: any;
 }
 
-export function ProjectMenu({ handleInvite }: Props) {
+export function ProjectMenu({
+  handleInvite,
+  handleContributors,
+  role,
+  id,
+}: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
@@ -28,6 +38,12 @@ export function ProjectMenu({ handleInvite }: Props) {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  let navigate = useNavigate();
+
+  const handleEdit = () => {
+    navigate('/admin/proposal/' + id + '/edit');
   };
 
   return (
@@ -40,21 +56,26 @@ export function ProjectMenu({ handleInvite }: Props) {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        <MenuIcon color="secondary" />
+        <MoreIcon color="primary" />
       </IconButton>
-
-      <Menu
-        id="fade-menu"
-        MenuListProps={{
-          'aria-labelledby': 'fade-button',
-        }}
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        TransitionComponent={Fade}
-      >
-        <MenuItem onClick={handleInvite}>Invite Contributor</MenuItem>
-      </Menu>
+      {role === 'admin' ? (
+        <Menu
+          id="fade-menu"
+          MenuListProps={{
+            'aria-labelledby': 'fade-button',
+          }}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          TransitionComponent={Fade}
+        >
+          <MenuItem onClick={handleInvite}>Invite Contributor</MenuItem>
+          <MenuItem onClick={handleContributors}>Manage Contributors</MenuItem>
+          <MenuItem onClick={handleEdit}>Edit Proposal</MenuItem>
+        </Menu>
+      ) : null}
     </div>
   );
 }
+
+//(<MenuItem onClick={navigate('/admin/proposal/' + id + '/edit')}>Edit Proposal</MenuItem>

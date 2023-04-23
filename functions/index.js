@@ -236,6 +236,95 @@ exports.createPaymentIntent = functions.https.onRequest(async (req, res) => {
   }
 });
 
+exports.getProjectDetail = functions.https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, PUT, POST, OPTIONS');
+  res.set('Access-Control-Allow-Headers', '*');
+
+  if (req.method === 'OPTIONS') {
+    res.end();
+  } else {
+    const docId = req.body.data.id;
+    const email = req.body.data.email;
+    try {
+      const proposal = await admin
+        .firestore()
+        .collection('proposals')
+        .doc(docId)
+        .get();
+
+      const usersCollection = admin.firestore().collection('users');
+      const adminDocument = usersCollection.doc('admin');
+      const adminsFollowersQuery = adminDocument
+        .collection('followers')
+        .where('name', '==', 'Arthur Dent');
+
+      const propsalRef = admin.firestore().collection('proposals');
+      const proposalDocument = await propsalRef.doc(docId);
+      const inviteQuery = await proposalDocument
+        .collection('invited_contributors')
+        .where('email', '==', email)
+        .get();
+
+      /* GOOD FOR SUB LOOP 
+      adminsFollowersQuery.get().then((adminsFollowers) => {
+        adminsFollowers.docs.forEach((adminFollower) => {
+          console.log(adminFollower.get("name"));
+        });
+      });
+      */
+
+      let invited = '';
+
+      inviteQuery.forEach(doc => {
+        console.log(doc.id, ' => ', doc.data());
+        invited = {
+          docId: doc.id,
+          epics: doc.data().epics,
+          type: doc.data().type,
+          inviter: doc.data().inviter,
+          status: doc.data().status,
+          intro: doc.data().intro,
+          created_on: doc.data().created_on,
+        };
+      });
+
+      const assignedEpics = [];
+
+      proposal.data().project_items.forEach(epic => {
+        invited.epics.forEach(assigned_epic => {
+          if (assigned_epic == epic._id) {
+            assignedEpics.push({
+              _id: epic._id,
+              item_title: epic.item_title,
+              description: epic.description,
+              item_estimation: epic.item_estimation,
+            });
+          }
+        });
+      });
+
+      const contributor_data = {
+        project_title: proposal.data().name,
+        project_summary: proposal.data().summary,
+        project_epics: assignedEpics,
+        project_docId: docId,
+        project_invited_docId: invited.docId,
+        project_invited_type: invited.type,
+        project_invited_on: invited.created_on,
+        project_inviter: invited.inviter,
+        project_status: invited.status,
+        project_intro: invited.intro,
+      };
+
+      res.send(contributor_data);
+    } catch (error) {
+      functions.logger.log(error);
+      res.status(500).send({ status: 'error' });
+    }
+  }
+});
+
 /**
  * When a user is created, create a Stripe customer object for them.
  *

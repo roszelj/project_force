@@ -3,7 +3,7 @@
  * EpicEditModal
  *
  */
-import * as React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button, { ButtonProps } from '@mui/material/Button';
@@ -19,6 +19,8 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import ListItemText from '@mui/material/ListItemText';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { selectLogin } from 'app/components/LoginForm/slice/selectors';
+
 import Checkbox from '@mui/material/Checkbox';
 
 import FormControl from '@mui/material/FormControl';
@@ -33,6 +35,16 @@ interface Props {}
 
 //forwardRef((props, ref)
 export const InviteModal = React.forwardRef((props: Props, ref: any) => {
+  const loginData = useSelector(selectLogin);
+  const data = useSelector(selectProposalDetail);
+
+  const useEffectOnMount = (effect: React.EffectCallback) => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(effect, []);
+  };
+
+  
+
   const {
     register,
     reset,
@@ -48,7 +60,13 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
     type: '',
     email: 'thisjustin178@gmail.com',
     epics: [],
+    project_docId: data.docId,
     status: 'invited',
+    intro: '',
+    inviter: {
+      name: loginData.profile.name,
+      avatar: loginData.profile.avatar,
+    },
     created_on: '',
   };
 
@@ -58,12 +76,12 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
 
   const [invite, setInvite] = React.useState<any>(initialState);
 
-  const [emailError, setEmailError] = React.useState("Please provide a valid email");
-
+  const [emailError, setEmailError] = React.useState(
+    'Please provide a valid email',
+  );
 
   const { actions } = useProposalDetailSlice();
 
-  const data = useSelector(selectProposalDetail);
 
   const dispatch = useDispatch();
 
@@ -73,19 +91,21 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
     },
   }));
 
-  const userInvitedCheck = (value) => {
+  useEffectOnMount(() => {
+   setInvite({project_docId: data.docId, ...invite})
+  });
 
+  const userInvitedCheck = value => {
+    const f: any = data.invited_contributors.find(ele => ele.email === value);
 
-    const f:any =  data.invited_contributors.find(ele => ele.email === value);
-
-    if(f){
-      setError('email', { message: "Email already received invite" });
-      setEmailError("Email already received invite");
+    if (f) {
+      setError('email', { message: 'Email already received invite' });
+      setEmailError('Email already received invite');
       return false;
-    }else{
+    } else {
       return true;
     }
-  }
+  };
 
   const handleClose = () => {
     setInviteOpen(false);
@@ -95,10 +115,10 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
 
   const theme = useTheme();
 
-
   const onSubmit = items => {
-
     const hasErrors = Object.values(errors).flat().length > 0;
+
+    console.log(invite);
     if (!hasErrors) {
       dispatch(actions.inviteToProject(invite));
       handleClose();
@@ -133,13 +153,12 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
       return {
         ...p,
         epics: value,
+
       };
     });
   };
 
   const handleInviteChange = event => {
-
-    
     const item = {
       value: event.target.value,
       field: event.target.name,
@@ -163,7 +182,12 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
       aria-describedby="modal-modal-description"
     >
       <ModalStyle>
-        <Typography id="modal-modal-title" variant="h6" component={H2}>
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          color="primary"
+          component={H2}
+        >
           Invite
         </Typography>
 
@@ -184,21 +208,47 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
               defaultValue={invite.email}
               type="email"
               required={true}
-            
-              helperText={errors.email
-                  ? emailError : ''
-              }
+              helperText={errors.email ? emailError : ''}
               {...register('email', {
                 required: true,
                 pattern: /\S+@\S+\.\S+/,
-                validate: (value) => userInvitedCheck(value), //value !== "bill",
+                validate: value => userInvitedCheck(value), //value !== "bill",
                 onChange: e => {
-                 
                   handleInviteChange(e);
                 },
               })}
               error={!!errors.email}
             />
+            <TextField
+              id="fullname"
+              label="Full Name"
+              variant="outlined"
+              required={true}
+              helperText={errors.fullname ? 'Provide a full name' : ''}
+              {...register('fullname', {
+                required: true,
+                onChange: e => {
+                  handleInviteChange(e);
+                },
+              })}
+              error={!!errors.fullname}
+            />
+            <TextField
+              label="Introduction"
+              multiline
+              rows={4}
+              variant="outlined"
+              required={true}
+              helperText={errors.intro ? 'Provide Intro' : ''}
+              {...register('intro', {
+                required: true,
+                onChange: e => {
+                  handleInviteChange(e);
+                },
+              })}
+              error={errors.intro ? true : false}
+            />
+
             <FormLabel id="demo-radio-buttons-group-label">
               Invite to Project as:
             </FormLabel>
@@ -212,39 +262,57 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
                 value="contributor"
                 control={<Radio />}
                 label="Contributor"
+                sx={{ color: theme.palette.text.secondary }}
               />
               <FormControlLabel
                 value="admin"
                 control={<Radio />}
                 label="Project Admin"
+                sx={{ color: theme.palette.text.secondary }}
               />
               <FormControlLabel
                 value="client"
                 control={<Radio />}
                 label="Client"
+                sx={{ color: theme.palette.text.secondary }}
               />
             </RadioGroup>
             {invite?.type === 'contributor' ? (
               <Select
                 labelId="demo-multiple-checkbox-label"
-                id="demo-multiple-checkbox"
+                id="epics"
                 multiple
                 value={invite.epics}
-                onChange={handleChange}
-                input={<OutlinedInput label="Epics" />}
+                input={<OutlinedInput color="primary" label="Epics" />}
                 renderValue={selected => 'Select Epics'}
                 displayEmpty={true}
                 MenuProps={MenuProps}
+                sx={{ color: theme.palette.text.secondary }}
+                required={true}
+                {...register('epics', {
+                  required: true,
+                  onChange: e => {
+                    handleChange(e);
+                  },
+                })}
+                error={errors.epics ? true : false}
               >
                 {data.project_items.map(
                   (item, index) => (
                     console.log(invite.epics.indexOf(item._id)),
                     (
-                      <MenuItem key={index} value={item._id}>
+                      <MenuItem
+                        key={index}
+                        value={item._id}
+                        sx={{ color: theme.palette.text.secondary }}
+                      >
                         <Checkbox
                           checked={invite.epics.indexOf(item._id) > -1}
                         />
-                        <ListItemText primary={item.item_title} />
+                        <ListItemText
+                          sx={{ color: theme.palette.text.secondary }}
+                          primary={item.item_title}
+                        />
                       </MenuItem>
                     )
                   ),
@@ -268,18 +336,18 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
   );
 });
 
-const ModalStyle = styled(Box)({
+const ModalStyle = styled(Box)(({ theme }) => ({
   position: 'absolute' as 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
-  backgroundColor: '#898381', //'background.paper',
+  backgroundColor: theme.palette.background.default,
   border: '2px solid rgba(220,120,95,1)',
   boxShadow: 24,
   padding: 14,
   color: p => p.theme.palette.text.primary,
-});
+}));
 
 const Div = styled(Box)(({ theme }) => ({
   color: theme.palette.primary.main,

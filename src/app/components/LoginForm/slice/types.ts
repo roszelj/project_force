@@ -1,14 +1,14 @@
 /* --- STATE --- */
 export interface LoginState {
   loading: boolean;
-  username: string;
   password: string;
   cpassword: string;
+  username: string;
   email: string;
-  name: string;
-  company: string;
   firstLogin: boolean;
-  reset: boolean;
+  reset?: boolean;
   error?: any;
+  profile: any;
+  invited: any;
   currentUser: any;
 }

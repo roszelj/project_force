@@ -7,15 +7,15 @@ import { useSelector, useDispatch } from 'react-redux';
 
 export const initialState: LoginState = {
   loading: false,
-  username: '',
   password: '',
   cpassword: '',
+  username: '',
   email: '',
-  name: '',
-  company: '',
-  error: null,
-  firstLogin: false,
   reset: false,
+  firstLogin: false,
+  error: '',
+  profile: {},
+  invited: {},
   currentUser: {},
 };
 
@@ -30,7 +30,8 @@ const slice = createSlice({
       state.loading = true;
     },
     loadUser(state, action: PayloadAction<any>) {
-      state.currentUser = action.payload;
+      state.currentUser = action.payload.currentUser;
+      state.profile = action.payload.profile;
       state.loading = false;
     },
     refreshUser(state, action: PayloadAction<any>) {
@@ -50,6 +51,9 @@ const slice = createSlice({
     },
     registerUserLoad(state, action: PayloadAction<any>) {
       state.loading = true;
+    },
+    registerUserInvited(state, action: PayloadAction<any>) {
+      state.invited = action.payload;
     },
     registered(state, action: PayloadAction<any>) {
       state.firstLogin = true;

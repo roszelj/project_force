@@ -24,17 +24,6 @@ function* loadProposal() {
   );
   const querySnapshot: any = yield call(getDocs, q);
 
-  const contributors = query(collectionGroup(firestore, 'contributors'));
-  const contributor_querySnapshot: any = yield call(getDocs, contributors);
-
-  const InvitedContributors = query(
-    collectionGroup(firestore, 'invited_contributors'),
-  );
-  const contributorInvited_querySnapshot: any = yield call(
-    getDocs,
-    InvitedContributors,
-  );
-
   let databaseInfo: any = {};
 
   querySnapshot.forEach(doc => {
@@ -45,6 +34,19 @@ function* loadProposal() {
     databaseInfo.contributors = [];
     databaseInfo.invited_contributors = [];
   });
+
+  const contributors = query(collectionGroup(firestore, 'contributors'), where('project_docId', '==', databaseInfo.docId));
+  const contributor_querySnapshot: any = yield call(getDocs, contributors);
+
+  const InvitedContributors = query(
+    collectionGroup(firestore, 'invited_contributors'),
+    where('project_docId', '==', databaseInfo.docId)
+  );
+  
+  const contributorInvited_querySnapshot: any = yield call(
+    getDocs,
+    InvitedContributors,
+  );
 
   contributor_querySnapshot.forEach(doc => {
     console.log(doc.id, ' => ', doc.data());
@@ -120,7 +122,7 @@ function* updateProjectStory() {
   }
 }
 
-function* addProjectContributors() {
+function* addProjectInvite() {
   yield delay(500);
 
   try {
@@ -140,6 +142,36 @@ function* addProjectContributors() {
   }
 }
 
+function* addProjectContributor() {
+  yield delay(500);
+
+  try {
+    const data: any = yield select(selectProposalDetail);
+
+    const docRef = collection(firestore, FirebaseConfig.DATASOURCE);
+
+    const contributorRef = collection(
+      docRef,
+      data.docId,
+      'contributors',
+    );
+
+    yield call(addDoc, contributorRef, { ...data.contributor_add });
+
+    const inviteRef = doc(firestore, 'proposals/'+data.docId+'/invited_contributors/'+data.contributor_add.invited_docId);
+
+    yield call(
+      setDoc,
+      inviteRef,
+      { status: 'approved' },
+      { merge: true },
+    );
+
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 export function* proposalDetailSaga() {
   yield takeLatest(actions.getProposal.type, loadProposal);
   yield takeLatest(actions.acceptTerms.type, acceptedTerms);
@@ -147,5 +179,7 @@ export function* proposalDetailSaga() {
   yield takeLatest(actions.updateProjectItemStory.type, updateProjectStory);
   yield takeLatest(actions.addNewProjectItemStory.type, updateProjectStory);
   yield takeLatest(actions.removeProjectItemStory.type, updateProjectStory);
-  yield takeLatest(actions.inviteToProject.type, addProjectContributors);
+  yield takeLatest(actions.inviteToProject.type, addProjectInvite);
+  yield takeLatest(actions.addContributor.type, addProjectContributor);
+  
 }

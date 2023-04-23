@@ -69,7 +69,9 @@ import { StoryEditModal } from 'app/components/StoryEditModal';
 import { AssetManager } from 'app/components/AssetManager';
 import { ProjectMenu } from 'app/components/ProjectMenu';
 import { InviteModal } from 'app/components/InviteModal';
-
+import { ContributorsModal } from 'app/components/ContributorsModal';
+import PermMediaIcon from '@mui/icons-material/PermMedia';
+import { ProjectAppBar } from 'app/components/ProjectAppBar';
 import 'styles/stripe.css';
 
 interface Props {
@@ -88,6 +90,8 @@ export function ProposalItemDetail({ id }: Props) {
   const storyEditRef: any = useRef();
 
   const inviteRef: any = useRef();
+
+  const contributorsRef: any = useRef();
 
   const loginData = useSelector(selectLogin);
 
@@ -186,6 +190,9 @@ export function ProposalItemDetail({ id }: Props) {
   //const darkTheme = createTheme({palette: themes.dark.palette});
   const darkTheme = createTheme({
     palette: {
+      background: {
+        default: '#222222',
+      },
       primary: {
         // Purple and green play nicely together.
         main: 'rgba(220,120,95,1)',
@@ -215,6 +222,10 @@ export function ProposalItemDetail({ id }: Props) {
     inviteRef.current.openModal();
   };
 
+  const handleContributors = () => {
+    contributorsRef.current.openModal();
+  };
+
   const appearance = {
     theme: 'night',
   };
@@ -224,36 +235,60 @@ export function ProposalItemDetail({ id }: Props) {
     appearance,
   };
 
+  const getProjectRole = () => {
+    if (loginData.currentUser.uid === data.admin_uid) {
+      return 'admin';
+    } else if (loginData.currentUser.uid === data.client_uid) {
+      return 'client';
+    } else {
+      return 'contributor';
+    }
+  };
   return (
     <>
       {isLoading && <LoadingIndicator />}
       <ThemeProvider theme={darkTheme}>
-        <Box>
-          <HeaderCard>
-            <Stack
-              direction="row"
-              justifyContent="flex-start"
-              alignItems="baseline"
-              spacing={1}
-              sx={{ width: '100%' }}
-            >
-              <Typography
-                variant="h5"
-                component="div"
-                sx={{ flexGrow: 1, alignItems: 'baseline' }}
-                color="secondary"
+        {/*
+      <Box sx={{position:"fixed", width:"100%", zIndex:1, display:"flex"}}>
+       <Box sx={{width:"960px", display:"flex",}}>
+        <HeaderCard sx={{width:"100%", maxWidth:"960px"}}>
+              
+              <Stack
+                direction="row"
+                justifyContent="flex-start"
+                alignItems="baseline"
+                spacing={1}
+                sx={{ }}
               >
-                {data.name}
-              </Typography>
+          
+                <Typography
+                  variant="h5"
+                  component="div"
+                  sx={{ flexGrow: 1, alignItems: 'baseline' }}
+                  color="secondary"
+                >
+                  {data.name}
+                </Typography>
 
-              <ProjectMenu handleInvite={handleInvite} />
-            </Stack>
-          </HeaderCard>
+                <ProjectMenu handleInvite={handleInvite} />
 
+              </Stack>
+              
+            </HeaderCard>
+            </Box>
+  </Box>*/}
+
+        <ProjectAppBar
+          handleInvite={handleInvite}
+          handleContributors={handleContributors}
+          role={getProjectRole()}
+          id={data.id}
+          title={data.name}
+        />
+        <Box sx={{ padding: 0 }}>
           <Paper
             variant="outlined"
             sx={{
-              paddingTop: 0,
               paddingBottom: 3,
               paddingLeft: 3,
               paddingRight: 3,
@@ -399,7 +434,7 @@ export function ProposalItemDetail({ id }: Props) {
                           id="panel1a-header"
                         >
                           <Typography variant="h6" color="secondary">
-                            Assets
+                            <PermMediaIcon color="secondary" />
                           </Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ padding: '0px' }}>
@@ -582,13 +617,6 @@ export function ProposalItemDetail({ id }: Props) {
             </Box>
           </Paper>
         </Box>
-        {loginData.currentUser.uid === data.admin_uid ? (
-          <Div>
-            <Button onClick={() => navigate('/admin/proposal/' + id + '/edit')}>
-              Edit
-            </Button>
-          </Div>
-        ) : null}
 
         <Modal
           open={checkoutOpen}
@@ -644,6 +672,7 @@ export function ProposalItemDetail({ id }: Props) {
         <EpicEditModal ref={epicEditRef} />
         <StoryEditModal ref={storyEditRef} />
         <InviteModal ref={inviteRef} />
+        <ContributorsModal handleInvite={handleInvite} ref={contributorsRef} />
       </ThemeProvider>
 
       <SaveCurrentRoute />
@@ -683,18 +712,18 @@ const DepositStyle = styled(Paper)(({ theme }) => ({
   lineHeight: '60px',
 }));
 
-const ModalStyle = styled(Box)({
+const ModalStyle = styled(Box)(({ theme }) => ({
   position: 'absolute' as 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
-  backgroundColor: '#898381', //'background.paper',
+  backgroundColor: theme.palette.background.default,
   border: '2px solid rgba(220,120,95,1)',
   boxShadow: 24,
   padding: 14,
   color: p => p.theme.palette.text.primary,
-});
+}));
 
 const Div = styled(Box)(({ theme }) => ({
   color: theme.palette.primary.main,

@@ -24,8 +24,10 @@ import {
   getDoc,
   addDoc,
   serverTimestamp,
+  collectionGroup,
 } from 'firebase/firestore';
 import { firestore } from 'firebase_setup/firebase';
+import { formatToISO } from 'utils/firestoreDateUtil';
 
 export function* authUser() {
   yield delay(500);
@@ -52,12 +54,13 @@ export function* authUser() {
 
     const userRef = doc(firestore, 'users', userCredential.user.uid);
 
-    console.log(userCredential.user.uid);
     const docSnap: any = yield call(getDoc, userRef);
 
     userJson.role = docSnap.data().role;
 
-    yield put(actions.loadUser(userJson));
+    const data = { profile: docSnap.data(), currentUser: userJson };
+
+    yield put(actions.loadUser(data));
   } catch (err: any) {
     yield put(actions.authError(err.message));
   }
@@ -65,15 +68,6 @@ export function* authUser() {
 
 export function* reAuthUser() {
   yield delay(500);
-
-  const firebaseConfig = {
-    apiKey: 'AIzaSyA5I85nn7BCYHw3LeQtrHt5fswzAiUaAjU',
-    authDomain: 'proposal-generator-f87ad.firebaseapp.com',
-    projectId: 'proposal-generator-f87ad',
-    storageBucket: 'proposal-generator-f87ad.appspot.com',
-    messagingSenderId: '502781870081',
-    appId: '1:502781870081:web:eb65653443223a4a238000',
-  };
 
   const auth = useAuth;
 
@@ -84,9 +78,13 @@ export function* reAuthUser() {
 
     const docSnap: any = yield call(getDoc, userRef);
 
-    const data = { ...user.currentUser, role: docSnap.data().role };
+    //const data = { ...user.currentUser, role: docSnap.data().role };
+    const currentUser = { role: docSnap.data().role, ...user.currentUser };
 
-    yield put(actions.loadUser(data));
+    const userJson = { currentUser: currentUser, profile: docSnap.data() };
+    //userJson.currentUser.role = docSnap.data().role;
+
+    yield put(actions.loadUser(userJson));
   } catch (err: any) {
     const errorCode = err.code;
     const errorMessage = err.message;
@@ -133,15 +131,54 @@ export function* registerUser() {
       { merge: true },
     );
 
-    //CHECK IF ANY PROPOSALS ARE A MATCH TO THE EMAIL:
+    //ADD IN ANY INVITED INFO AS SUB COLLECTION
+
+    //const proposalInvitedDocRef = doc(firestore, 'proposals', userInfo.invited.invite_docId);
+
+    const InvitedContributor = doc(
+      firestore,
+      'proposals/' + userInfo.invited.project_docId,
+      'invited_contributors/' + userInfo.invited.invite_docId,
+    );
+
+    /*
+    const contributorInvited_docSnapshot: any = yield call(
+      getDoc,
+      InvitedContributor,
+    );*/
+
+    yield call(
+      setDoc,
+      InvitedContributor,
+      { status: userInfo.invited.project_status, uid:userCredential.user.uid, updated_on: formatToISO() },
+      { merge: true },
+    );
+
+    //console.log("did it work? "+contributorInvited_docSnapshot.data().email);
+
+    //contributorInvited_docSnapshot.forEach(doc => {
+    //console.log(doc.id, ' => ', doc.data());
+    //databaseInfo.invited_contributors.push({ docId: doc.id, ...doc.data() });
+    //});
+
+    const usersRef = collection(firestore, 'users');
+
+    const userInvitedRef = collection(
+      usersRef,
+      userCredential.user.uid,
+      'invited',
+    );
+
+    yield call(addDoc, userInvitedRef, { ...userInfo.invited });
+
+    //CHECK IF ANY PROPOSALS ARE A MATCH TO THE EMAIL: (client senerio)
 
     const q = query(
       collection(firestore, FirebaseConfig.DATASOURCE),
       where('email', '==', userInfo.email),
     );
-    const querySnapshot: any = yield call(getDocs, q);
 
-    let databaseInfo: any = {};
+    const querySnapshot: any = yield call(getDocs, q);
 
     querySnapshot.forEach(item => {
       const docRef = doc(firestore, FirebaseConfig.DATASOURCE, item.id);

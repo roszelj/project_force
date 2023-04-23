@@ -39,12 +39,11 @@ export function LoginForm(props: Props) {
   };
 
   useEffectOnMount(() => {
-    dispatch(actions.resetLogin());
+    //dispatch(actions.resetLogin());
   });
 
   // Get redirect location or provide fallback
   const location: any = useLocation();
-
   if (loginData.currentUser.uid > '' && loginData.currentUser.role == 'user') {
     if (!!loginData.currentUser.redirect) {
       navigate(loginData.currentUser.redirect);

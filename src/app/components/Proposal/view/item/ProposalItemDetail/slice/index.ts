@@ -13,7 +13,8 @@ export const initialState: ProposalDetailState = {
     project_items: [],
     invited_contributors: [],
     contributors: [],
-    invited: [],
+    invited: {},
+    contributor_add: {},
   },
 };
 
@@ -91,6 +92,12 @@ const slice = createSlice({
       state.proposal.invited = action.payload;
       state.proposal.invited.created_on = formatToISO();
     },
+    addContributor(state, action: PayloadAction<any>){
+      state.proposal.contributors.push(action.payload);
+      state.proposal.contributor_add = action.payload;
+      const f = state.proposal.invited_contributors.find(e => e.docId === action.payload.invited_docId)
+       f.status = 'approved';
+    }
   },
 });
 
