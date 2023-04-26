@@ -31,7 +31,7 @@ import { PaymentSuccessful } from './pages/PaymentSuccessful';
 import { useLoginSlice } from 'app/components/LoginForm/slice';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectLogin } from 'app/components/LoginForm/slice/selectors';
-
+import { ProjectInviteLanding } from './pages/ProjectInviteLanding';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from 'firebase_setup/firebase';
 
@@ -44,9 +44,9 @@ export function App() {
   const onAuthStateChange = () => {
     useAuth.onAuthStateChanged(user => {
       if (user) {
-        let data: any = user.toJSON();
+        let currentUser: any = user.toJSON();
 
-        if (typeof data.email != 'undefined') {
+        if (typeof currentUser.email != 'undefined') {
           console.log('logged in');
           /*
           if (data.email == 'justin@zellebook.com') {
@@ -56,9 +56,9 @@ export function App() {
             data.role = 'user';
           }*/
 
-          data.redirect = sessionStorage.getItem('last_path');
+          currentUser.redirect = sessionStorage.getItem('last_path');
 
-          dispatch(actions.refreshUser(data));
+          dispatch(actions.refreshUser(currentUser));
         }
       } else {
         console.log('not logged');
@@ -100,6 +100,10 @@ export function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/payment-successful" element={<PaymentSuccessful />} />
+        <Route
+          path="/project-invite/:id/:email"
+          element={<ProjectInviteLanding />}
+        />
         <Route
           path="admin"
           element={

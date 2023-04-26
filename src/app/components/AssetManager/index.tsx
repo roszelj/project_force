@@ -94,7 +94,7 @@ export function AssetManager({ docId, epicId }: Props) {
   const listFiles = () => {
     const assetData: any = [];
 
-    const listRef = ref(storage, 'epic-assets/'+docId+'/'+epicId);
+    const listRef = ref(storage, 'epic-assets/' + docId + '/' + epicId);
 
     listAll(listRef)
       .then(res => {
@@ -214,8 +214,8 @@ export function AssetManager({ docId, epicId }: Props) {
         <input
           accept="any/*"
           style={{ display: 'none' }}
-          id={'assets_'+epicId}
-          name={'assets_'+epicId}
+          id={'assets_' + epicId}
+          name={'assets_' + epicId}
           type="file"
           multiple
           onChange={handleChange}
@@ -225,7 +225,7 @@ export function AssetManager({ docId, epicId }: Props) {
             <LoadingIndicator small strokeColor={'rgba(220,120,95,1)'} />
           </div>
         ) : (
-          <label htmlFor={'assets_'+epicId}>
+          <label htmlFor={'assets_' + epicId}>
             <Button variant="outlined" component="span">
               Add
             </Button>

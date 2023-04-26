@@ -18,16 +18,14 @@ import { useLoginSlice } from 'app/components/LoginForm/slice';
 import { useNavigate } from 'react-router-dom';
 import { A } from '../A';
 
-import { useSelector, useDispatch } from 'react-redux';
+import {
+  initialState,
+  useInvitedSlice,
+} from 'app/components/ProjectDetail/slice';
+import { selectInvited } from 'app/components/ProjectDetail/slice/selectors';
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyA5I85nn7BCYHw3LeQtrHt5fswzAiUaAjU',
-  authDomain: 'proposal-generator-f87ad.firebaseapp.com',
-  projectId: 'proposal-generator-f87ad',
-  storageBucket: 'proposal-generator-f87ad.appspot.com',
-  messagingSenderId: '502781870081',
-  appId: '1:502781870081:web:eb65653443223a4a238000',
-};
+import { useSelector, useDispatch } from 'react-redux';
+import { formatToISO } from 'utils/firestoreDateUtil';
 
 interface Props {}
 
@@ -39,6 +37,8 @@ export function RegisterForm(props: Props) {
   const registerData = useSelector(selectLogin);
 
   const isLoading = useSelector(selectLoading);
+
+  const project_data = useSelector(selectInvited);
 
   if (
     registerData.currentUser.uid > '' &&
@@ -72,6 +72,18 @@ export function RegisterForm(props: Props) {
 
   useEffectOnMount(() => {
     //const inputs = document.getElementById("cpassword").value;
+    if (Object.keys(project_data.proposal).length > 0) {
+      const invited_data = {
+        invite_docId: project_data.proposal.project_invited_docId,
+        project_docId: project_data.proposal.project_docId,
+        type: project_data.proposal.project_invited_type,
+        inviter_name: project_data.proposal.project_inviter.name,
+        project_title: project_data.proposal.project_title,
+        project_status: 'accepted_invite',
+        accepted_on: formatToISO(),
+      };
+      dispatch(actions.registerUserInvited(invited_data));
+    }
   });
 
   const cpassword = useRef(null);
@@ -159,7 +171,7 @@ export function RegisterForm(props: Props) {
 
     dispatch(actions.registerUser(item));
 
-    console.log(cpassword.current);
+    //console.log(cpassword.current);
   };
 
   const errorFields = getErrorFields(registerData);

@@ -32,7 +32,7 @@ export const initialState: ProposalFormState = {
     terms: '',
     accepted_terms: false,
     client_uid: '',
-    admin_uid: '',
+    owner_uid: '',
     project_items: [],
   },
 };

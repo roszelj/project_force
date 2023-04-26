@@ -11,10 +11,13 @@ import {
   setDoc,
   deleteDoc,
   getDocs,
+  getDoc,
   doc,
   query,
   where,
   onSnapshot,
+  collectionGroup,
+  documentId,
   orderBy,
 } from 'firebase/firestore';
 import { FirebaseConfig } from 'firebase_setup/FirestoreConfig';
@@ -29,11 +32,11 @@ function* loadProposals() {
   //const data: any = yield select(selectProposalList);
   //const ref = collection(firestore, 'test_data'); // Firebase creates this automatically
   //const data: ProposalListState[] = yield query(collection(firestore, 'test_data'));
-  const databaseInfo: any[] = [];
+  let databaseInfo: any[] = [];
 
   //const data = user.currentUser.role == 'user'
 
-  let client_data: any = null;
+  let contributor_data: any = null;
   let admin_data: any = null;
 
   const proposalRef = collection(firestore, FirebaseConfig.DATASOURCE);
@@ -43,32 +46,49 @@ function* loadProposals() {
 
     case 'user':
       //PROPOSALS THAT THE USER IS THE CLIENT
-
-      client_data = query(
+      const contributors = query(
+        collectionGroup(firestore, 'contributors'),
+        where('uid', '==', user.currentUser.uid),
+      );
+      /*
+      contributor_data = query(
         proposalRef,
 
-        where('client_uid', '==', user.currentUser.uid),
+        where('uid', '==', user.currentUser.uid),
 
         orderBy('createdOn', 'desc'),
       );
+*/
 
-      admin_data = query(
+      const owner_data = query(
         proposalRef,
-
-        where('admin_uid', '==', user.currentUser.uid),
-
+        where('owner_uid', '==', user.currentUser.uid),
         orderBy('createdOn', 'desc'),
       );
 
-      const admin_querySnapshot: any[] = yield call(getDocs, admin_data);
-      const client_querySnapshot: any[] = yield call(getDocs, client_data);
-
-      admin_querySnapshot.forEach(doc => {
-        doc.data().id ? databaseInfo.push(doc.data()) : null;
+      const owner_querySnapshot: any[] = yield call(getDocs, owner_data);
+      owner_querySnapshot.forEach(item => {
+        databaseInfo.push(item.data());
       });
 
-      client_querySnapshot.forEach(doc => {
-        doc.data().id ? databaseInfo.push(doc.data()) : null;
+      const contributor_querySnapshot: any[] = yield call(
+        getDocs,
+        contributors,
+      );
+
+      const contributor_item: any = [];
+      contributor_querySnapshot.forEach(item => {
+        contributor_item.push(item.data().project_docId);
+      });
+
+      const proposalQuery = query(
+        collection(firestore, 'proposals'),
+        where(documentId(), 'in', contributor_item),
+      );
+
+      const proposal_querySnapshot: any[] = yield call(getDocs, proposalQuery);
+      proposal_querySnapshot.forEach(item => {
+        databaseInfo.push(item.data());
       });
 
       break;
