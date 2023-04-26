@@ -173,7 +173,11 @@ export function ProposalForm({ id, reset }: Props) {
       }
 
       dispatch(
-        actions.update({ value: user.currentUser.uid, field: 'admin_uid' }),
+        actions.update({ value: user.currentUser.uid, field: 'owner_uid'}),
+      );
+
+      dispatch(
+        actions.update({ value: user.profile.name, field: 'owner_name'}),
       );
 
       id

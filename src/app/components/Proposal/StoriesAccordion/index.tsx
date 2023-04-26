@@ -4,6 +4,7 @@
  *
  */
 import * as React from 'react';
+
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -17,14 +18,17 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
+import { StringAvatar } from 'app/components/StringAvatar';
+import Tooltip from '@mui/material/Tooltip';
 
 interface Props {
   stories: any;
   epicId: any;
   handleEditStory: any;
+  role: any;
 }
 
-export function StoriesAccordion({ stories, epicId, handleEditStory }: Props) {
+export function StoriesAccordion({ stories, epicId, handleEditStory, role }: Props) {
   const theme = useTheme();
 
   return (
@@ -44,6 +48,7 @@ export function StoriesAccordion({ stories, epicId, handleEditStory }: Props) {
             sx={{ backgroundColor: 'rgb(18, 18, 18)', paddingBottom: '0px' }}
           >
             <Typography color="secondary">{item.description}</Typography>
+          
             <Stack
               direction="row"
               justifyContent="space-around"
@@ -51,6 +56,16 @@ export function StoriesAccordion({ stories, epicId, handleEditStory }: Props) {
               spacing={1}
               sx={{ width: '100%', marginTop: '10px' }}
             >
+              <Box>
+              {Object.keys(item.owner_name).length > 0 ? (
+                <Tooltip title={item.owner_name}>
+          
+                  <Avatar
+                    {...StringAvatar(item.owner_name, 'small')}/>
+   
+                </Tooltip>
+                ) :null}
+              </Box>
               <Typography sx={{ textAlign: 'center' }} color="secondary">
                 {item.status}
               </Typography>
@@ -63,6 +78,7 @@ export function StoriesAccordion({ stories, epicId, handleEditStory }: Props) {
                 {item.type}
               </Typography>
               <Divider orientation="vertical" variant="middle" flexItem />
+              {role !== "client" ? (
               <Typography sx={{ textAlign: 'center' }} color="secondary">
                 <Button
                   variant="text"
@@ -74,6 +90,7 @@ export function StoriesAccordion({ stories, epicId, handleEditStory }: Props) {
                   Edit
                 </Button>
               </Typography>
+              ): null}
             </Stack>
           </AccordionDetails>
         </Accordion>

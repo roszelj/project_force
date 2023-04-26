@@ -13,6 +13,7 @@ export const initialState: LoginState = {
   email: '',
   reset: false,
   firstLogin: false,
+  company: '',
   error: '',
   profile: {},
   invited: {},

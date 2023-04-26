@@ -25,6 +25,7 @@ import {
 import { selectInvited } from 'app/components/ProjectDetail/slice/selectors';
 
 import { useSelector, useDispatch } from 'react-redux';
+import { formatToISO } from 'utils/firestoreDateUtil';
 
 interface Props {}
 
@@ -71,7 +72,7 @@ export function RegisterForm(props: Props) {
 
   useEffectOnMount(() => {
     //const inputs = document.getElementById("cpassword").value;
-    if (!!project_data) {
+    if (Object.keys(project_data.proposal).length > 0) {
       const invited_data = {
         invite_docId: project_data.proposal.project_invited_docId,
         project_docId: project_data.proposal.project_docId,
@@ -79,6 +80,7 @@ export function RegisterForm(props: Props) {
         inviter_name: project_data.proposal.project_inviter.name,
         project_title: project_data.proposal.project_title,
         project_status: 'accepted_invite',
+        accepted_on: formatToISO(),
       };
       dispatch(actions.registerUserInvited(invited_data));
     }

@@ -70,8 +70,9 @@ export function ProjectDetail({ id, email }: Props) {
           dispatch(actions.setLoading(false));
           setError(true);
         } else {
-          console.log(data);
           dispatch(actions.loadProposal(data));
+          //setInviteStatus(data.proposal.status)
+          // console.log(data);
         }
       });
   });
@@ -175,7 +176,7 @@ export function ProjectDetail({ id, email }: Props) {
                   </>
                 ))}
 
-                {project_data.proposal.status != 'invited' ? (
+                {project_data.proposal.project_status === 'invited' ? (
                   <Box>
                     <Alert severity="info">
                       Accepting this invite simply shows your interest in having
@@ -231,7 +232,7 @@ export function ProjectDetail({ id, email }: Props) {
             >
               <Button onClick={() => navigate('/register')}>Register</Button>
 
-              <Button>Login</Button>
+              <Button onClick={() => navigate('/login')}>Login</Button>
             </Stack>
           </Box>
         </ModalStyle>

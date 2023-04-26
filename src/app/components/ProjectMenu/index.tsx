@@ -44,36 +44,51 @@ export function ProjectMenu({
 
   const handleEdit = () => {
     navigate('/admin/proposal/' + id + '/edit');
+    setAnchorEl(null);
+  };
+
+  const _handleInvite = () => {
+    handleInvite();
+    setAnchorEl(null);
+  };
+  const _handleContributors = () => {
+    handleContributors();
+    setAnchorEl(null);
+  };
+
+  const _handleEdit = () => {
+    handleEdit();
+    setAnchorEl(null);
   };
 
   return (
     <div>
-      <IconButton
-        id="fade-button"
-        color="primary"
-        aria-controls={open ? 'fade-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
-      >
-        <MoreIcon color="primary" />
-      </IconButton>
-      {role === 'admin' ? (
-        <Menu
-          id="fade-menu"
-          MenuListProps={{
-            'aria-labelledby': 'fade-button',
-          }}
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          TransitionComponent={Fade}
+      {role === 'owner' ? (
+        <IconButton
+          id="fade-button"
+          color="primary"
+          aria-controls={open ? 'fade-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          onClick={handleClick}
         >
-          <MenuItem onClick={handleInvite}>Invite Contributor</MenuItem>
-          <MenuItem onClick={handleContributors}>Manage Contributors</MenuItem>
-          <MenuItem onClick={handleEdit}>Edit Proposal</MenuItem>
-        </Menu>
+          <MoreIcon color="primary" />
+        </IconButton>
       ) : null}
+      <Menu
+        id="fade-menu"
+        MenuListProps={{
+          'aria-labelledby': 'fade-button',
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Fade}
+      >
+        <MenuItem onClick={_handleInvite}>Invite Contributor</MenuItem>
+        <MenuItem onClick={_handleContributors}>Manage Contributors</MenuItem>
+        <MenuItem onClick={_handleEdit}>Edit Proposal</MenuItem>
+      </Menu>
     </div>
   );
 }

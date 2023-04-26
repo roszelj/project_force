@@ -22,6 +22,10 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import FilledInput from '@mui/material/FilledInput';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
 
 interface Props {}
 
@@ -36,7 +40,7 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
     formState: { errors },
   } = useForm();
 
-  const storyInitialState = {
+  const storyInitialState:any = {
     epic_id: '',
     title: '',
     description: '',
@@ -45,30 +49,49 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
     _id: '',
     type: '',
     created_on: '',
+    owner_uid: '',
+    owner_name: '',
   };
+
+  const ownerInitialState:any= {
+    owner: []
+  }
+
+  const contributorsInitialState: any = [];
 
   const initialState = false;
 
   const [storyEditOpen, setStoryEditOpen] = React.useState(false);
   const [story, setStory] = React.useState(storyInitialState);
+  const [owner, setOwner] = React.useState(ownerInitialState);
+
   const [epicId, setEpicId] = React.useState();
   const [editing, setEditing] = React.useState(false);
   const [nextId, setNextId] = React.useState(initialState);
   const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [contributors, setContributors] = React.useState(
+    contributorsInitialState,
+  );
 
   const { actions } = useProposalDetailSlice();
 
   const dispatch = useDispatch();
 
   React.useImperativeHandle(ref, () => ({
-    openModal(storyData, epicId, nextId) {
+    openModal(storyData, epicId, contributors, nextId) {
       if (storyData) {
         setStory(storyData);
+        setOwner([storyData.owner_uid, storyData.owner_name]);
+    
+
+       
         setEditing(true);
       } else {
         setNextId(nextId);
       }
       setEpicId(epicId);
+      setContributors(contributors);
+
       setStoryEditOpen(true);
     },
   }));
@@ -172,6 +195,7 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
 
   const onSubmit = data => {
     const hasErrors = Object.values(errors).flat().length > 0;
+
     if (!hasErrors) {
       const new_item = {
         epic_id: epicId,
@@ -180,18 +204,42 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
         description: data.description,
         type: data.type,
         points: Number(data.points),
+        owner: owner,
         status: data.status,
         created_on: nextId ? formatToISO() : story.created_on,
       };
 
+    
       editing
         ? dispatch(actions.updateProjectItemStory(new_item))
         : dispatch(actions.addNewProjectItemStory(new_item));
+
+        console.log(story.owner);
 
       handleClose();
     }
   };
 
+  const handleOwnerChange = event => {
+    const item = {
+      value: event.target.value,
+      field: event.target.name,
+    };
+
+    setOwner([event.target.value[0], event.target.value[1]])
+    
+    setStory((p) => {
+      return({
+        ...p,
+        owner_name: event.target.value[1]
+      });
+    });
+    //console.log(owner);
+    
+
+
+
+  };
   return (
     <Modal
       open={storyEditOpen}
@@ -278,6 +326,38 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
               {...register('points', { required: true })}
               error={errors.points ? true : false}
             />
+            <Box sx={{ paddingTop: 2, paddingLeft: 1 }}>
+              <FormControl variant="outlined" disabled>
+                <InputLabel htmlFor="component-filled">Owner</InputLabel>
+
+                <FilledInput
+                  key={story.owner_name}
+                  id="component-filled"
+                  name="owner_name"
+                  defaultValue={story.owner_name}
+                />
+              </FormControl>
+              <Select
+                input={<OutlinedInput />}
+                required={true}
+                defaultValue={owner}
+                renderValue={() => ''}
+                {...register('owner', {
+                  required: true,
+                  onChange: e => {
+                    handleOwnerChange(e);
+                  },
+                })}
+                error={errors.owner ? true : false}
+              >
+                {contributors.map((option, index) => (
+                  <MenuItem key={index} value={[option.uid, option.name]}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Box>
+
             {editing ? (
               <Box display="flex" justifyContent="right" alignItems="right">
                 <Button

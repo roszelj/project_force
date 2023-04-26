@@ -5,6 +5,7 @@ export interface LoginState {
   cpassword: string;
   username: string;
   email: string;
+  company: string;
   firstLogin: boolean;
   reset?: boolean;
   error?: any;

@@ -61,6 +61,37 @@ export function* authUser() {
     const data = { profile: docSnap.data(), currentUser: userJson };
 
     yield put(actions.loadUser(data));
+
+    //ADD IN ANY INVITED INFO AS SUB COLLECTION
+    if (Object.keys(userCreds.invited).length > 0) {
+      const InvitedContributor = doc(
+        firestore,
+        'proposals/' + userCreds.invited.project_docId,
+        'invited_contributors/' + userCreds.invited.invite_docId,
+      );
+
+      yield call(
+        setDoc,
+        InvitedContributor,
+        {
+          status: userCreds.invited.project_status,
+          uid: userCredential.user.uid,
+          updated_on: formatToISO(),
+        },
+        { merge: true },
+      );
+
+      const usersRef = collection(firestore, 'users');
+
+      const userInvitedRef = collection(
+        usersRef,
+        userCredential.user.uid,
+        'invited',
+      );
+
+      yield call(addDoc, userInvitedRef, { ...userCreds.invited });
+    }
+    //END INVITE
   } catch (err: any) {
     yield put(actions.authError(err.message));
   }
@@ -78,11 +109,9 @@ export function* reAuthUser() {
 
     const docSnap: any = yield call(getDoc, userRef);
 
-    //const data = { ...user.currentUser, role: docSnap.data().role };
     const currentUser = { role: docSnap.data().role, ...user.currentUser };
 
     const userJson = { currentUser: currentUser, profile: docSnap.data() };
-    //userJson.currentUser.role = docSnap.data().role;
 
     yield put(actions.loadUser(userJson));
   } catch (err: any) {
@@ -132,45 +161,34 @@ export function* registerUser() {
     );
 
     //ADD IN ANY INVITED INFO AS SUB COLLECTION
+    if (Object.keys(userInfo.invited).length > 0) {
+      const InvitedContributor = doc(
+        firestore,
+        'proposals/' + userInfo.invited.project_docId,
+        'invited_contributors/' + userInfo.invited.invite_docId,
+      );
 
-    //const proposalInvitedDocRef = doc(firestore, 'proposals', userInfo.invited.invite_docId);
+      yield call(
+        setDoc,
+        InvitedContributor,
+        {
+          status: userInfo.invited.project_status,
+          uid: userCredential.user.uid,
+          updated_on: formatToISO(),
+        },
+        { merge: true },
+      );
 
-    const InvitedContributor = doc(
-      firestore,
-      'proposals/' + userInfo.invited.project_docId,
-      'invited_contributors/' + userInfo.invited.invite_docId,
-    );
+      const usersRef = collection(firestore, 'users');
 
-    /*
-    const contributorInvited_docSnapshot: any = yield call(
-      getDoc,
-      InvitedContributor,
-    );*/
+      const userInvitedRef = collection(
+        usersRef,
+        userCredential.user.uid,
+        'invited',
+      );
 
-    yield call(
-      setDoc,
-      InvitedContributor,
-      { status: userInfo.invited.project_status, uid:userCredential.user.uid, updated_on: formatToISO() },
-      { merge: true },
-    );
-
-    //console.log("did it work? "+contributorInvited_docSnapshot.data().email);
-
-    //contributorInvited_docSnapshot.forEach(doc => {
-    //console.log(doc.id, ' => ', doc.data());
-    //databaseInfo.invited_contributors.push({ docId: doc.id, ...doc.data() });
-    //});
-
-    const usersRef = collection(firestore, 'users');
-
-    const userInvitedRef = collection(
-      usersRef,
-      userCredential.user.uid,
-      'invited',
-    );
-
-    yield call(addDoc, userInvitedRef, { ...userInfo.invited });
-
+      yield call(addDoc, userInvitedRef, { ...userInfo.invited });
+    }
     //CHECK IF ANY PROPOSALS ARE A MATCH TO THE EMAIL: (client senerio)
 
     const q = query(
@@ -185,13 +203,13 @@ export function* registerUser() {
 
       setDoc(docRef, { client_uid: userCredential.user.uid }, { merge: true });
     });
+
+    yield put(actions.registered(userInfo.email));
   } catch (err: any) {
     const errorCode = err.code;
     const errorMessage = err.message;
     yield put(actions.authError(err.message));
   }
-
-  yield put(actions.registered(userInfo.email));
 }
 
 export function* loginSaga() {

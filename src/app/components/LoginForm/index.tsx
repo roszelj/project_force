@@ -10,6 +10,7 @@ import { Input } from 'app/components/Input';
 import { FieldSet } from 'app/components/FieldSet';
 import { LoadingIndicator } from 'app/components/LoadingIndicator';
 import { TextButton } from 'app/components/TextButton';
+import { formatToISO } from 'utils/firestoreDateUtil';
 import {
   selectLoading,
   selectLogin,
@@ -17,6 +18,7 @@ import {
 import { useLoginSlice } from './slice';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { A } from '../A';
+import { selectInvited } from 'app/components/ProjectDetail/slice/selectors';
 
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -33,6 +35,8 @@ export function LoginForm(props: Props) {
 
   const isLoading = useSelector(selectLoading);
 
+  const project_data = useSelector(selectInvited);
+
   const useEffectOnMount = (effect: React.EffectCallback) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(effect, []);
@@ -40,6 +44,18 @@ export function LoginForm(props: Props) {
 
   useEffectOnMount(() => {
     //dispatch(actions.resetLogin());
+    if (Object.keys(project_data.proposal).length > 0) {
+      const invited_data = {
+        invite_docId: project_data.proposal.project_invited_docId,
+        project_docId: project_data.proposal.project_docId,
+        type: project_data.proposal.project_invited_type,
+        inviter_name: project_data.proposal.project_inviter.name,
+        project_title: project_data.proposal.project_title,
+        project_status: 'accepted_invite',
+        accepted_on: formatToISO(),
+      };
+      dispatch(actions.registerUserInvited(invited_data));
+    }
   });
 
   // Get redirect location or provide fallback

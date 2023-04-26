@@ -3,7 +3,7 @@
  * EpicEditModal
  *
  */
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button, { ButtonProps } from '@mui/material/Button';
@@ -38,13 +38,6 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
   const loginData = useSelector(selectLogin);
   const data = useSelector(selectProposalDetail);
 
-  const useEffectOnMount = (effect: React.EffectCallback) => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(effect, []);
-  };
-
-  
-
   const {
     register,
     reset,
@@ -60,7 +53,7 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
     type: '',
     email: 'thisjustin178@gmail.com',
     epics: [],
-    project_docId: data.docId,
+    project_docId: '',
     status: 'invited',
     intro: '',
     inviter: {
@@ -82,18 +75,20 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
 
   const { actions } = useProposalDetailSlice();
 
-
   const dispatch = useDispatch();
 
   React.useImperativeHandle(ref, () => ({
     openModal() {
       setInviteOpen(true);
+
+      setInvite(p => {
+        return {
+          ...p,
+          project_docId: data.docId,
+        };
+      });
     },
   }));
-
-  useEffectOnMount(() => {
-   setInvite({project_docId: data.docId, ...invite})
-  });
 
   const userInvitedCheck = value => {
     const f: any = data.invited_contributors.find(ele => ele.email === value);
@@ -118,7 +113,6 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
   const onSubmit = items => {
     const hasErrors = Object.values(errors).flat().length > 0;
 
-    console.log(invite);
     if (!hasErrors) {
       dispatch(actions.inviteToProject(invite));
       handleClose();
@@ -153,7 +147,6 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
       return {
         ...p,
         epics: value,
-
       };
     });
   };
@@ -170,8 +163,6 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
         [item.field]: item.value,
       };
     });
-
-    //dispatch(actions.update(item));
   };
 
   return (
@@ -277,48 +268,38 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
                 sx={{ color: theme.palette.text.secondary }}
               />
             </RadioGroup>
-            {invite?.type === 'contributor' ? (
-              <Select
-                labelId="demo-multiple-checkbox-label"
-                id="epics"
-                multiple
-                value={invite.epics}
-                input={<OutlinedInput color="primary" label="Epics" />}
-                renderValue={selected => 'Select Epics'}
-                displayEmpty={true}
-                MenuProps={MenuProps}
-                sx={{ color: theme.palette.text.secondary }}
-                required={true}
-                {...register('epics', {
-                  required: true,
-                  onChange: e => {
-                    handleChange(e);
-                  },
-                })}
-                error={errors.epics ? true : false}
-              >
-                {data.project_items.map(
-                  (item, index) => (
-                    console.log(invite.epics.indexOf(item._id)),
-                    (
-                      <MenuItem
-                        key={index}
-                        value={item._id}
-                        sx={{ color: theme.palette.text.secondary }}
-                      >
-                        <Checkbox
-                          checked={invite.epics.indexOf(item._id) > -1}
-                        />
-                        <ListItemText
-                          sx={{ color: theme.palette.text.secondary }}
-                          primary={item.item_title}
-                        />
-                      </MenuItem>
-                    )
-                  ),
-                )}
-              </Select>
-            ) : null}
+            <Select
+              labelId="demo-multiple-checkbox-label"
+              id="epics"
+              multiple
+              value={invite.epics}
+              input={<OutlinedInput color="primary" label="Epics" />}
+              renderValue={selected => 'Select Epics'}
+              displayEmpty={true}
+              MenuProps={MenuProps}
+              sx={{ color: theme.palette.text.secondary }}
+              {...register('epics', {
+                onChange: e => {
+                  handleChange(e);
+                },
+              })}
+              error={errors.epics ? true : false}
+            >
+              {data.project_items.map((item, index) => (
+                <MenuItem
+                  key={index}
+                  value={item._id}
+                  sx={{ color: theme.palette.text.secondary }}
+                >
+                  <Checkbox checked={invite.epics.indexOf(item._id) > -1} />
+                  <ListItemText
+                    sx={{ color: theme.palette.text.secondary }}
+                    primary={item.item_title}
+                  />
+                </MenuItem>
+              ))}
+            </Select>
+
             <Box
               display="flex"
               m={2}

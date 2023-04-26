@@ -13,10 +13,13 @@ import {
 import { FirebaseConfig } from 'firebase_setup/FirestoreConfig';
 import { firestore } from 'firebase_setup/firebase';
 import { selectId, selectProposalDetail } from './selectors';
+import { selectLogin } from 'app/components/LoginForm/slice/selectors';
 
 function* loadProposal() {
   yield delay(500);
   const id: string = yield select(selectId);
+
+  const loginData: any = yield select(selectLogin);
 
   const q = query(
     collection(firestore, FirebaseConfig.DATASOURCE),
@@ -35,14 +38,17 @@ function* loadProposal() {
     databaseInfo.invited_contributors = [];
   });
 
-  const contributors = query(collectionGroup(firestore, 'contributors'), where('project_docId', '==', databaseInfo.docId));
+  const contributors = query(
+    collectionGroup(firestore, 'contributors'),
+    where('project_docId', '==', databaseInfo.docId),
+  );
   const contributor_querySnapshot: any = yield call(getDocs, contributors);
 
   const InvitedContributors = query(
     collectionGroup(firestore, 'invited_contributors'),
-    where('project_docId', '==', databaseInfo.docId)
+    where('project_docId', '==', databaseInfo.docId),
   );
-  
+
   const contributorInvited_querySnapshot: any = yield call(
     getDocs,
     InvitedContributors,
@@ -57,6 +63,9 @@ function* loadProposal() {
     console.log(doc.id, ' => ', doc.data());
     databaseInfo.invited_contributors.push({ docId: doc.id, ...doc.data() });
   });
+
+  databaseInfo.currentUserId = loginData.currentUser.uid;
+  databaseInfo.role = loginData.currentUser.role;
 
   try {
     yield put(actions.loadProposalItem(databaseInfo));
@@ -150,23 +159,69 @@ function* addProjectContributor() {
 
     const docRef = collection(firestore, FirebaseConfig.DATASOURCE);
 
-    const contributorRef = collection(
-      docRef,
-      data.docId,
-      'contributors',
-    );
+    const contributorRef = collection(docRef, data.docId, 'contributors');
 
     yield call(addDoc, contributorRef, { ...data.contributor_add });
 
-    const inviteRef = doc(firestore, 'proposals/'+data.docId+'/invited_contributors/'+data.contributor_add.invited_docId);
+    const inviteRef = doc(
+      firestore,
+      'proposals/' +
+        data.docId +
+        '/invited_contributors/' +
+        data.contributor_add.invited_docId,
+    );
+
+    yield call(setDoc, inviteRef, { status: 'approved' }, { merge: true });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+function* updateContributorEpics() {
+  yield delay(500);
+
+  try {
+    const data: any = yield select(selectProposalDetail);
+
+    const inviteRef = doc(
+      firestore,
+      'proposals/' +
+        data.docId +
+        '/contributors/' +
+        data.contributor_update.docId,
+    );
 
     yield call(
       setDoc,
       inviteRef,
-      { status: 'approved' },
+      { epics: data.contributor_update.epics },
       { merge: true },
     );
+  } catch (err) {
+    console.log(err);
+  }
+}
 
+function* updateContributorType() {
+  yield delay(500);
+
+  try {
+    const data: any = yield select(selectProposalDetail);
+
+    const inviteRef = doc(
+      firestore,
+      'proposals/' +
+        data.docId +
+        '/contributors/' +
+        data.contributor_update.docId,
+    );
+
+    yield call(
+      setDoc,
+      inviteRef,
+      { type: data.contributor_update.type },
+      { merge: true },
+    );
   } catch (err) {
     console.log(err);
   }
@@ -181,5 +236,6 @@ export function* proposalDetailSaga() {
   yield takeLatest(actions.removeProjectItemStory.type, updateProjectStory);
   yield takeLatest(actions.inviteToProject.type, addProjectInvite);
   yield takeLatest(actions.addContributor.type, addProjectContributor);
-  
+  yield takeLatest(actions.updateContributorEpics.type, updateContributorEpics);
+  yield takeLatest(actions.updateContributorType.type, updateContributorType);
 }
