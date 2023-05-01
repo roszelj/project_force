@@ -390,7 +390,7 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle id="alert-dialog-title">
-            {'Delete this store?'}
+            {'Delete this story?'}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">

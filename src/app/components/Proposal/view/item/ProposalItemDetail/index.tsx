@@ -225,13 +225,13 @@ export function ProposalItemDetail({ id }: Props) {
   };
 
   const handleEditStory = (storyData, epicId) => {
-    const contributors = [{owner_uid: data.owner_uid, name: data.owner_name},...data.contributors]
+    const contributors = [{uid: data.owner_uid, name: data.owner_name},...data.contributors]
     storyEditRef.current.openModal(storyData, epicId, contributors);
   };
 
   const handleAddStory = (epicId, totalStories) => {
     const nextId = totalStories + 1;
-    const contributors = [{owner_uid: data.owner_uid, name: data.owner_name},...data.contributors]
+    const contributors = [{uid: data.owner_uid, name: data.owner_name},...data.contributors]
   
     storyEditRef.current.openModal(null, epicId, contributors, nextId);
   };
@@ -265,7 +265,7 @@ export function ProposalItemDetail({ id }: Props) {
   */
 
   const getPermissions = () => {
-    if (loginData.currentUser.uid === data.owner_uid) {
+    if (loginData.currentUser.uid === data.owner_uid || loginData.currentUser.role === 'sa') {
       setPermission('owner');
     } else {
       const contributor_role = data.contributors.find(

@@ -46,7 +46,7 @@ export function LoginForm(props: Props) {
     //dispatch(actions.resetLogin());
     if (Object.keys(project_data.proposal).length > 0) {
       const invited_data = {
-        invite_docId: project_data.proposal.project_invited_docId,
+        invited_docId: project_data.proposal.project_invited_docId,
         project_docId: project_data.proposal.project_docId,
         type: project_data.proposal.project_invited_type,
         inviter_name: project_data.proposal.project_inviter.name,

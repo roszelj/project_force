@@ -79,7 +79,7 @@ export const ContributorsModal = React.forwardRef(
     const data = useSelector(selectProposalDetail);
 
     const dataFiltered = data.invited_contributors.filter(
-      ele => ele.status !== 'approved',
+      ele => ele.status != 'approved',
     );
 
     const dispatch = useDispatch();

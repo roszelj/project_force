@@ -33,7 +33,6 @@ import { formatToISO } from 'utils/firestoreDateUtil';
 
 interface Props {}
 
-//forwardRef((props, ref)
 export const InviteModal = React.forwardRef((props: Props, ref: any) => {
   const loginData = useSelector(selectLogin);
   const data = useSelector(selectProposalDetail);
@@ -51,7 +50,7 @@ export const InviteModal = React.forwardRef((props: Props, ref: any) => {
 
   const initialState = {
     type: '',
-    email: 'thisjustin178@gmail.com',
+    email: '',
     epics: [],
     project_docId: '',
     status: 'invited',
