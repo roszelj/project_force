@@ -68,14 +68,17 @@ export function* authUser() {
       const InvitedContributor = doc(
         firestore,
         'proposals/' + userCreds.invited.project_docId,
-        'invited_contributors/' + userCreds.invited.invite_docId,
+        'invited_contributors/' + userCreds.invited.invited_docId,
       );
 
       yield call(
         setDoc,
         InvitedContributor,
         {
-          status: (userCreds.invited.type === 'client' ? 'approved' : userCreds.invited.project_status),
+          status:
+            userCreds.invited.type === 'client'
+              ? 'approved'
+              : userCreds.invited.project_status,
           uid: userCredential.user.uid,
           updated_on: formatToISO(),
         },
@@ -93,7 +96,7 @@ export function* authUser() {
       yield call(addDoc, userInvitedRef, { ...userCreds.invited });
 
       //CHECK IF THIS IS CLIENT SO WE CAN ADD RIGHT AWAY AS A CONTRIBUTOR
-      if(userCreds.invited.type === 'client'){
+      if (userCreds.invited.type === 'client') {
         const contributor_data = {
           project_docId: userCreds.invited.project_docId,
           type: userCreds.invited.type,
@@ -103,14 +106,16 @@ export function* authUser() {
           email: userCreds.email,
           epics: [],
           created_on: formatToISO(),
-        }
-  
+        };
+
         const docRef = collection(firestore, FirebaseConfig.DATASOURCE);
-        const contributorRef = collection(docRef, userCreds.invited.project_docId, 'contributors');
+        const contributorRef = collection(
+          docRef,
+          userCreds.invited.project_docId,
+          'contributors',
+        );
         yield call(addDoc, contributorRef, { ...contributor_data });
       }
-
-      
     }
     //END INVITE
   } catch (err: any) {
@@ -183,7 +188,6 @@ export function* registerUser() {
 
     //ADD IN ANY INVITED INFO AS SUB COLLECTION
     if (Object.keys(userInfo.invited).length > 0) {
-
       const InvitedContributor = doc(
         firestore,
         'proposals/' + userInfo.invited.project_docId,
@@ -194,7 +198,10 @@ export function* registerUser() {
         setDoc,
         InvitedContributor,
         {
-          status: (userInfo.invited.type === 'client' ? 'approved' : userInfo.invited.project_status),
+          status:
+            userInfo.invited.type === 'client'
+              ? 'approved'
+              : userInfo.invited.project_status,
           uid: userCredential.user.uid,
           updated_on: formatToISO(),
         },
@@ -212,23 +219,26 @@ export function* registerUser() {
       yield call(addDoc, userInvitedRef, { ...userInfo.invited });
 
       //CHECK IF THIS IS CLIENT SO WE CAN ADD RIGHT AWAY AS A CONTRIBUTOR
-      if(userInfo.invited.type === 'client'){
-      const contributor_data = {
-        project_docId: userInfo.invited.project_docId,
-        type: userInfo.invited.type,
-        invited_docId: userInfo.invited.invited_docId,
-        uid: userCredential.user.uid,
-        name: userInfo.name,
-        email: userInfo.email,
-        epics: [],
-        created_on: formatToISO(),
+      if (userInfo.invited.type === 'client') {
+        const contributor_data = {
+          project_docId: userInfo.invited.project_docId,
+          type: userInfo.invited.type,
+          invited_docId: userInfo.invited.invited_docId,
+          uid: userCredential.user.uid,
+          name: userInfo.name,
+          email: userInfo.email,
+          epics: [],
+          created_on: formatToISO(),
+        };
+
+        const docRef = collection(firestore, FirebaseConfig.DATASOURCE);
+        const contributorRef = collection(
+          docRef,
+          userInfo.invited.project_docId,
+          'contributors',
+        );
+        yield call(addDoc, contributorRef, { ...contributor_data });
       }
-
-      const docRef = collection(firestore, FirebaseConfig.DATASOURCE);
-      const contributorRef = collection(docRef, userInfo.invited.project_docId, 'contributors');
-      yield call(addDoc, contributorRef, { ...contributor_data });
-    }
-
     }
     //CHECK IF ANY PROPOSALS ARE A MATCH TO THE EMAIL: (client senerio)
 

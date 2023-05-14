@@ -47,6 +47,16 @@ import FormGroup from '@mui/material/FormGroup';
 import Switch from '@mui/material/Switch';
 import { StringAvatar } from 'app/components/StringAvatar';
 import Avatar from '@mui/material/Avatar';
+import Accordion from '@mui/material/Accordion';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Alert from '@mui/material/Alert';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 interface Props {
   handleInvite: any;
@@ -58,6 +68,8 @@ export const ContributorsModal = React.forwardRef(
     const loginData = useSelector(selectLogin);
 
     const [openList, setOpenList] = React.useState(false);
+    const [dialogOpen, setDialogOpen] = React.useState(false);
+
 
     const {
       register,
@@ -73,6 +85,8 @@ export const ContributorsModal = React.forwardRef(
     const initialState = {};
 
     const [contributorOpen, setContributorOpen] = React.useState(false);
+    const [selectedContributor, setSelectedContributor] = React.useState();
+
 
     const { actions } = useProposalDetailSlice();
 
@@ -108,6 +122,44 @@ export const ContributorsModal = React.forwardRef(
       dispatch(actions.updateContributorType(item));
     };
 
+    const handleDialogOpen = (docId) => {
+      setSelectedContributor(docId);
+      setDialogOpen(true);
+    };
+  
+    const handleDialogClose = () => {
+      setDialogOpen(false);
+    };
+  
+    const handleDialogYes = () => {
+      handleRemoveContributor();
+      setDialogOpen(false);
+    };
+
+
+    const handleRemoveContributor = () => {
+
+      const contributor = data.contributors.find(e => e.docId === selectedContributor);
+
+      const updatedContributor = {
+        project_docId: data.docId,
+        type: contributor.type,
+        docId: contributor.docId,
+        uid: contributor.uid,
+        name: contributor.fullname,
+        email: contributor.email,
+        epics: contributor.epics,
+        created_on: formatToISO(),
+      };
+
+      dispatch(actions.removeContributor(updatedContributor));
+
+
+
+      //dispatch(actions.removeContributor(docId));
+    }
+
+
     const theme = useTheme();
 
     return (
@@ -133,53 +185,62 @@ export const ContributorsModal = React.forwardRef(
             </Typography>
           ) : (
             <List
-              sx={{ width: '100%', bgcolor: 'background.paper' }}
+              sx={{ width: '100%', bgcolor: 'background.paper', padding: 0 }}
               component="nav"
               aria-labelledby="nested-list-subheader"
             >
               {data.contributors.map((item, index) => (
                 <Box key={index}>
-                  <ListItemButton onClick={handleClick}>
-                    <ListItemIcon>
-                    <Avatar
-                    {...StringAvatar(item.name, 'small')}/>
-   
-              
-                    </ListItemIcon>
-                    <ListItem alignItems="flex-start">
-                      <StackItem name={item.name} status="" />
-                    </ListItem>
-                    {openList ? <ExpandLess /> : <ExpandMore />}
-                  </ListItemButton>
-                  <Collapse in={openList} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                    {item.type !== 'client' ? (
-                      <ListItem sx={{ pl: 2 }}>
-                     
-                        <EpicSelect
-                          projectItems={data.project_items}
-                          assigned={item.epics}
-                          uid={item.uid}
-                        />
-                       
-                        <FormGroup>
-                          <FormControlLabel
-                            sx={{ paddingLeft: 2 }}
-                            control={
-                              <Switch
-                                name="type"
-                                onChange={e => handleContribType(e, item.uid)}
-                                checked={item.type === 'admin' ? true : false}
-                              />
-                            }
-                            label="Project Admin"
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
+                      <StackItem name={item.name} status="" invited={false} />
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      {item.type !== 'client' ? (
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'space-evenly',
+                            alignItems: 'baseline',
+                          }}
+                        >
+                          <EpicSelect
+                            projectItems={data.project_items}
+                            assigned={item.epics}
+                            uid={item.uid}
                           />
-                        </FormGroup>
-                       
-                      </ListItem>
-                       ) : <Typography  sx={{ paddingLeft: 2 }} color="secondary">Client</Typography>}
-                    </List>
-                  </Collapse>
+
+                          <FormGroup>
+                            <FormControlLabel
+                              sx={{ paddingLeft: 2 }}
+                              control={
+                                <Switch
+                                  name="type"
+                                  onChange={e => handleContribType(e, item.uid)}
+                                  checked={item.type === 'admin' ? true : false}
+                                />
+                              }
+                              label="Project Admin"
+                            />
+                          </FormGroup>
+                        </Box>
+                      ) : (
+                        <Typography sx={{ paddingLeft: 2 }} color="secondary">
+                          Client
+                        </Typography>
+                      )}
+                      <Box sx={{display:"flex", justifyContent:"center", paddingTop:2}}>
+                      <Button variant="outlined" onClick={() => handleDialogOpen(item.docId)}>
+            Remove
+          </Button>
+                      </Box>
+                      
+                    </AccordionDetails>
+                  </Accordion>
                 </Box>
               ))}
             </List>
@@ -214,29 +275,48 @@ export const ContributorsModal = React.forwardRef(
             >
               {dataFiltered.map((item, index) => (
                 <Box key={index}>
-                  <ListItemButton onClick={handleClick}>
-                    <ListItemIcon>
-                      <PersonIcon />
-                    </ListItemIcon>
-                    <ListItem alignItems="flex-start">
-                      <StackItem name={item.fullname} status={item.status} />
-                    </ListItem>
-                    {openList ? <ExpandLess /> : <ExpandMore />}
-                  </ListItemButton>
-                  <Collapse in={openList} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      <ListItem sx={{ pl: 2 }} alignItems="flex-start">
-                        <InvitedDetailsItem
-                          id={item.docId}
-                          projectDocId={data.docId}
-                        />
-                      </ListItem>
-                    </List>
-                  </Collapse>
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
+                      <StackItem
+                        name={item.fullname}
+                        status={item.status}
+                        invited={true}
+                      />
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <InvitedDetailsItem
+                        id={item.docId}
+                        projectDocId={data.docId}
+                      />
+                    </AccordionDetails>
+                  </Accordion>
                 </Box>
               ))}
             </List>
           )}
+           <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Remove?'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to remove this contributor?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>No</Button>
+          <Button onClick={handleDialogYes} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
         </ModalStyle>
       </Modal>
     );
@@ -249,6 +329,8 @@ interface InvitedDetailsProps {
 }
 
 export function InvitedDetailsItem({ id, projectDocId }: InvitedDetailsProps) {
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
   const { actions } = useProposalDetailSlice();
 
   const data = useSelector(selectProposalDetail);
@@ -257,29 +339,81 @@ export function InvitedDetailsItem({ id, projectDocId }: InvitedDetailsProps) {
 
   const selectedInvite = data.invited_contributors.find(e => e.docId === id);
 
+  const updatedContributor = {
+    project_docId: projectDocId,
+    type: selectedInvite.type,
+    invited_docId: selectedInvite.docId,
+    uid: selectedInvite.uid,
+    name: selectedInvite.fullname,
+    email: selectedInvite.email,
+    epics: selectedInvite.epics,
+    created_on: formatToISO(),
+  };
+
   const handleAddContributor = () => {
-    const updatedContributor = {
-      project_docId: projectDocId,
-      type: selectedInvite.type,
-      invited_docId: selectedInvite.docId,
-      uid: selectedInvite.uid,
-      name: selectedInvite.fullname,
-      email: selectedInvite.email,
-      epics: selectedInvite.epics,
-      created_on: formatToISO(),
-    };
     dispatch(actions.addContributor(updatedContributor));
+  };
+
+  const handleRemoveInvite = () => {
+    dispatch(actions.removeInvite(updatedContributor));
+  };
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleDialogYes = () => {
+    handleRemoveInvite();
+    setDialogOpen(false);
   };
 
   return (
     <>
       {selectedInvite.status != 'invited' ? (
         <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'center' }}>
-          <Button variant="outlined" onClick={handleAddContributor}>
-            Add as Contributor
+          <Box sx={{ justifyContent: 'space-evenly' }}>
+            <Button variant="outlined" onClick={handleAddContributor}>
+              Add as Contributor
+            </Button>
+            <Button variant="outlined" onClick={handleRemoveInvite}>
+              Remove
+            </Button>
+          </Box>
+        </Box>
+      ) : (
+        <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'center' }}>
+          <Alert severity="info">
+            Once the invite has been excepted you can add as a contributor
+          </Alert>
+
+          <Button variant="outlined" onClick={handleDialogOpen}>
+            Remove
           </Button>
         </Box>
-      ) : null}
+      )}
+      <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Remove?'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to remove this user?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>No</Button>
+          <Button onClick={handleDialogYes} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
@@ -287,8 +421,9 @@ export function InvitedDetailsItem({ id, projectDocId }: InvitedDetailsProps) {
 interface ItemProps {
   name: string;
   status: string;
+  invited: boolean;
 }
-export function StackItem({ name, status }: ItemProps) {
+export function StackItem({ name, status, invited }: ItemProps) {
   return (
     <>
       <Stack
@@ -298,14 +433,17 @@ export function StackItem({ name, status }: ItemProps) {
         sx={{ display: 'flex', flexGrow: 1 }}
         divider={<Divider orientation="vertical" flexItem />}
       >
+        {invited ? <PersonIcon /> : <Avatar {...StringAvatar(name, 'small')} />}
         <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'left' }}>
-          <Typography>{name}</Typography>
+          <Typography sx={{ width: '100%' }}>{name}</Typography>
         </Box>
-        <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'right' }}>
-          <Typography sx={{ textAlign: 'right' }}>
-            {status === 'accepted_invite' ? 'Accepted' : status}
-          </Typography>
-        </Box>
+        {invited ? (
+          <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'right' }}>
+            <Typography sx={{ textAlign: 'right', width: '100%' }}>
+              {status === 'accepted_invite' ? 'Accepted' : status}
+            </Typography>
+          </Box>
+        ) : null}
       </Stack>
     </>
   );
@@ -322,6 +460,9 @@ const ModalStyle = styled(Box)(({ theme }) => ({
   boxShadow: 24,
   padding: 14,
   color: theme.palette.text.primary,
+  overflow: 'scroll',
+  height: '100%',
+  display: 'block',
 }));
 
 const Div = styled(Box)(({ theme }) => ({

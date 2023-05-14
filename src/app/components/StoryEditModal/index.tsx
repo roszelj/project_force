@@ -40,7 +40,7 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
     formState: { errors },
   } = useForm();
 
-  const storyInitialState:any = {
+  const storyInitialState: any = {
     epic_id: '',
     title: '',
     description: '',
@@ -53,9 +53,9 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
     owner_name: '',
   };
 
-  const ownerInitialState:any= {
-    owner: []
-  }
+  const ownerInitialState: any = {
+    owner: [],
+  };
 
   const contributorsInitialState: any = [];
 
@@ -82,9 +82,7 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
       if (storyData) {
         setStory(storyData);
         setOwner([storyData.owner_uid, storyData.owner_name]);
-    
 
-       
         setEditing(true);
       } else {
         setNextId(nextId);
@@ -209,12 +207,11 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
         created_on: nextId ? formatToISO() : story.created_on,
       };
 
-    
       editing
         ? dispatch(actions.updateProjectItemStory(new_item))
         : dispatch(actions.addNewProjectItemStory(new_item));
 
-        console.log(story.owner);
+      console.log(story.owner);
 
       handleClose();
     }
@@ -226,19 +223,15 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
       field: event.target.name,
     };
 
-    setOwner([event.target.value[0], event.target.value[1]])
-    
-    setStory((p) => {
-      return({
+    setOwner([event.target.value[0], event.target.value[1]]);
+
+    setStory(p => {
+      return {
         ...p,
-        owner_name: event.target.value[1]
-      });
+        owner_name: event.target.value[1],
+      };
     });
     //console.log(owner);
-    
-
-
-
   };
   return (
     <Modal

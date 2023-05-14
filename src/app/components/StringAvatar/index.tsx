@@ -6,12 +6,11 @@
 import * as React from 'react';
 
 function stringToColor(string: string) {
-
   let hash = 0;
   let i;
 
   /* eslint-disable no-bitwise */
-  if(typeof string !== 'undefined' && string !== ""){
+  if (typeof string !== 'undefined' && string !== '') {
     for (i = 0; i < string.length; i += 1) {
       hash = string.charCodeAt(i) + ((hash << 5) - hash);
     }

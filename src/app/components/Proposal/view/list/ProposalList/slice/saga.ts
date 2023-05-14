@@ -81,19 +81,21 @@ function* loadProposals() {
         contributor_item.push(item.data().project_docId);
       });
 
-      if(contributor_item.length > 0 ){
+      if (contributor_item.length > 0) {
         const proposalQuery = query(
           collection(firestore, 'proposals'),
           where(documentId(), 'in', contributor_item),
         );
 
-        const proposal_querySnapshot: any[] = yield call(getDocs, proposalQuery);
-        
+        const proposal_querySnapshot: any[] = yield call(
+          getDocs,
+          proposalQuery,
+        );
+
         proposal_querySnapshot.forEach(item => {
           databaseInfo.push(item.data());
         });
       }
-      
 
       break;
 

@@ -19,7 +19,7 @@ interface Props {
   handleEditEpic: any;
   handleAddStory: any;
   totalStories: any;
-  role:any;
+  role: any;
 }
 
 export function EpicMenu({
@@ -27,7 +27,7 @@ export function EpicMenu({
   handleAddStory,
   totalStories,
   handleEditEpic,
-  role
+  role,
 }: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -85,8 +85,12 @@ export function EpicMenu({
         TransitionComponent={Fade}
       >
         <MenuItem>Add Comment</MenuItem>
-        {role === "admin" || role === "owner" || role === "contributor" ? (<MenuItem onClick={handleNewStory}>Add Story</MenuItem>) : null}
-        {role === "admin" || role === "owner" ? (<MenuItem onClick={handleEdit}>Edit</MenuItem>) : null}
+        {role === 'admin' || role === 'owner' || role === 'contributor' ? (
+          <MenuItem onClick={handleNewStory}>Add Story</MenuItem>
+        ) : null}
+        {role === 'admin' || role === 'owner' ? (
+          <MenuItem onClick={handleEdit}>Edit</MenuItem>
+        ) : null}
       </Menu>
     </div>
   );

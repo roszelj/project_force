@@ -9,6 +9,7 @@ import {
   where,
   collectionGroup,
   addDoc,
+  deleteDoc,
 } from 'firebase/firestore';
 import { FirebaseConfig } from 'firebase_setup/FirestoreConfig';
 import { firestore } from 'firebase_setup/firebase';
@@ -227,6 +228,42 @@ function* updateContributorType() {
   }
 }
 
+function* removeInvite() {
+  yield delay(500);
+
+  try {
+    const data: any = yield select(selectProposalDetail);
+
+    const inviteRef = doc(
+      firestore,
+      'proposals/' + data.docId + '/invited_contributors/',
+      data.contributor_update.invited_docId,
+    );
+
+    yield call(deleteDoc, inviteRef);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+function* removeContributor() {
+  yield delay(500);
+
+  try {
+    const data: any = yield select(selectProposalDetail);
+
+    const inviteRef = doc(
+      firestore,
+      'proposals/' + data.docId + '/contributors/',
+      data.contributor_update.docId,
+    );
+
+    yield call(deleteDoc, inviteRef);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 export function* proposalDetailSaga() {
   yield takeLatest(actions.getProposal.type, loadProposal);
   yield takeLatest(actions.acceptTerms.type, acceptedTerms);
@@ -238,4 +275,7 @@ export function* proposalDetailSaga() {
   yield takeLatest(actions.addContributor.type, addProjectContributor);
   yield takeLatest(actions.updateContributorEpics.type, updateContributorEpics);
   yield takeLatest(actions.updateContributorType.type, updateContributorType);
+  yield takeLatest(actions.removeInvite.type, removeInvite);
+  yield takeLatest(actions.removeContributor.type, removeContributor);
+
 }

@@ -28,7 +28,12 @@ interface Props {
   role: any;
 }
 
-export function StoriesAccordion({ stories, epicId, handleEditStory, role }: Props) {
+export function StoriesAccordion({
+  stories,
+  epicId,
+  handleEditStory,
+  role,
+}: Props) {
   const theme = useTheme();
 
   return (
@@ -48,7 +53,7 @@ export function StoriesAccordion({ stories, epicId, handleEditStory, role }: Pro
             sx={{ backgroundColor: 'rgb(18, 18, 18)', paddingBottom: '0px' }}
           >
             <Typography color="secondary">{item.description}</Typography>
-          
+
             <Stack
               direction="row"
               justifyContent="space-around"
@@ -57,14 +62,11 @@ export function StoriesAccordion({ stories, epicId, handleEditStory, role }: Pro
               sx={{ width: '100%', marginTop: '10px' }}
             >
               <Box>
-              {Object.keys(item.owner_name).length > 0 ? (
-                <Tooltip title={item.owner_name}>
-          
-                  <Avatar
-                    {...StringAvatar(item.owner_name, 'small')}/>
-   
-                </Tooltip>
-                ) :null}
+                {Object.keys(item.owner_name).length > 0 ? (
+                  <Tooltip title={item.owner_name}>
+                    <Avatar {...StringAvatar(item.owner_name, 'small')} />
+                  </Tooltip>
+                ) : null}
               </Box>
               <Typography sx={{ textAlign: 'center' }} color="secondary">
                 {item.status}
@@ -78,19 +80,19 @@ export function StoriesAccordion({ stories, epicId, handleEditStory, role }: Pro
                 {item.type}
               </Typography>
               <Divider orientation="vertical" variant="middle" flexItem />
-              {role !== "client" ? (
-              <Typography sx={{ textAlign: 'center' }} color="secondary">
-                <Button
-                  variant="text"
-                  color="primary"
-                  onClick={() => {
-                    handleEditStory(item, epicId);
-                  }}
-                >
-                  Edit
-                </Button>
-              </Typography>
-              ): null}
+              {role !== 'client' ? (
+                <Typography sx={{ textAlign: 'center' }} color="secondary">
+                  <Button
+                    variant="text"
+                    color="primary"
+                    onClick={() => {
+                      handleEditStory(item, epicId);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </Typography>
+              ) : null}
             </Stack>
           </AccordionDetails>
         </Accordion>

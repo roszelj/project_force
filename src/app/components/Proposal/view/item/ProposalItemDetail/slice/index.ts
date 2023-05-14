@@ -116,6 +116,24 @@ const slice = createSlice({
       state.proposal.invited = action.payload;
       state.proposal.invited.created_on = formatToISO();
     },
+    removeInvite(state, action: PayloadAction<any>) {
+      const f = state.proposal.invited_contributors.filter(
+        ele => ele.docId !== action.payload.invited_docId,
+      );
+
+      state.proposal.contributor_update = action.payload;
+
+      state.proposal.invited_contributors = f;
+    },
+    removeContributor(state, action: PayloadAction<any>) {
+      const f = state.proposal.contributors.filter(
+        ele => ele.docId !== action.payload.docId,
+      );
+
+      state.proposal.contributor_update = action.payload;
+
+      state.proposal.contributors = f;
+    },
     addContributor(state, action: PayloadAction<any>) {
       state.proposal.contributors.push(action.payload);
       state.proposal.contributor_add = action.payload;
