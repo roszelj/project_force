@@ -86,6 +86,7 @@ interface Props {
 
 export function ProposalItemDetail({ id }: Props) {
   const [clientSecret, setClientSecret] = useState('');
+  const [stripeCusId, setStripeCusId] = useState('');
   const [terms, setTerms] = useState([false, true]);
   const [termsError, setTermsError] = useState(false);
   const [termsName, setTermsName] = useState('');
@@ -105,9 +106,7 @@ export function ProposalItemDetail({ id }: Props) {
 
   let navigate = useNavigate();
 
-  const stripePromise = loadStripe(
-    'pk_test_51MmOC6JNye0CcGyXNFquJ8DEUDOU6hfFCpDo1CrO8NTlFMWx2jn5dZuJllMaclEKV3LiTWUd6vhLNQcn3MDF1ydX00siPhyDMH',
-  );
+  const stripePromise = loadStripe('pk_test_LMbQACCWivaznEqUBRKlBbSY');
 
   const { actions } = useProposalDetailSlice();
   const dispatch = useDispatch();
@@ -161,17 +160,29 @@ export function ProposalItemDetail({ id }: Props) {
   const handlePayment = () => {
     // Create PaymentIntent as soon as the page loads
     setPaymentFormLoading(true);
+
+    //console.log('Profile data' + loginData.profile.name);
     fetch(
-      'https://us-central1-proposal-generator-f87ad.cloudfunctions.net/createPaymentIntent',
+      'http://127.0.0.1:5001/proposal-generator-f87ad/us-central1/createPaymentIntent',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data: { item: { id: data.id } } }),
+        body: JSON.stringify({
+          data: {
+            item: {
+              id: data.id,
+              name: loginData.profile.name,
+              email: data.email,
+            },
+          },
+        }),
       },
     )
       .then(res => res.json())
       .then(data => {
-        setClientSecret(data.clientSecret), setPaymentFormLoading(false);
+        setClientSecret(data.clientSecret),
+          //setStripeCusId(data.customer_id),
+          setPaymentFormLoading(false);
       });
 
     handleCheckoutClose();
@@ -253,10 +264,16 @@ export function ProposalItemDetail({ id }: Props) {
     theme: 'night',
   };
 
-  const options = {
+  const options: any = {
     clientSecret,
     appearance,
   };
+
+  const billingDetails: any = {
+    name: loginData.profile.name,
+    email: data.email,
+  };
+
   /*
   const getProjectRole = () => {
     if (loginData.currentUser.uid === data.admin_uid) {
@@ -779,6 +796,7 @@ export function ProposalItemDetail({ id }: Props) {
                     docId={data.docId}
                     paymentCurrentInstallment={data.payment_current_installment}
                     paymentSchedule={data.payment_schedule}
+                    defaultValues={billingDetails}
                   />
                 </Elements>
               )}
@@ -811,7 +829,7 @@ const A = styled('a')(({ theme }) => ({
 }));
 
 const H2 = styled('h2')(({ theme }) => ({
-  color: theme.palette.primary,
+  color: theme.palette.primary.main,
 }));
 
 const DepositStyle = styled(Paper)(({ theme }) => ({
@@ -823,16 +841,16 @@ const DepositStyle = styled(Paper)(({ theme }) => ({
 }));
 
 const ModalStyle = styled(Box)(({ theme }) => ({
-  position: 'absolute' as 'absolute',
+  position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
   backgroundColor: theme.palette.background.default,
-  border: '2px solid rgba(220,120,95,1)',
-  boxShadow: 24,
+  //border: '2px solid rgba(220,120,95,1)',
+  //boxShadow: 24,
   padding: 14,
-  color: p => p.theme.palette.text.primary,
+  // /color: p => p.theme.palette.text.primary,
 }));
 
 const Div = styled(Box)(({ theme }) => ({

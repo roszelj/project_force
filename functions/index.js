@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 const admin = require('firebase-admin');
 admin.initializeApp();
 const { Logging } = require('@google-cloud/logging');
@@ -24,7 +24,7 @@ const logging = new Logging({
 });
 
 const { Stripe } = require('stripe');
-const stripe = new Stripe(functions.config().stripe.secret, {
+const stripe = new Stripe('sk_test_ctGruWEMVukWQFu0TkjQGPR4', {
   apiVersion: '2020-08-27',
 });
 
@@ -202,6 +202,7 @@ exports.addPaymentDetail = functions.https.onRequest(async (req, res) => {
           );
 
         res.send({ status: 'Update Completed' });
+        //SEND PAYMENT EMAIL TO CUSTOMER
       }
     } catch (error) {
       // We want to capture errors and render them in a user-friendly way, while
@@ -221,18 +222,30 @@ exports.createPaymentIntent = functions.https.onRequest(async (req, res) => {
     res.end();
   } else {
     const id = req.body.data.item.id;
+    const name = req.body.data.item.name;
+    const email = req.body.data.item.email;
 
     const { amount } = await calculateOrderAmount(id);
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount.toFixed(0),
+      receipt_email: email,
+      description: 'Thanks for your payment!',
       currency: 'usd',
       automatic_payment_methods: {
         enabled: true,
       },
     });
 
-    res.send({ clientSecret: paymentIntent.client_secret });
+    const customer = await stripe.customers.create({
+      name: name,
+      email: email,
+    });
+
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+      customer_id: customer.id,
+    });
   }
 });
 

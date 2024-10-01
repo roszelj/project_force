@@ -70,7 +70,6 @@ export const ContributorsModal = React.forwardRef(
     const [openList, setOpenList] = React.useState(false);
     const [dialogOpen, setDialogOpen] = React.useState(false);
 
-
     const {
       register,
       reset,
@@ -86,7 +85,6 @@ export const ContributorsModal = React.forwardRef(
 
     const [contributorOpen, setContributorOpen] = React.useState(false);
     const [selectedContributor, setSelectedContributor] = React.useState();
-
 
     const { actions } = useProposalDetailSlice();
 
@@ -122,24 +120,24 @@ export const ContributorsModal = React.forwardRef(
       dispatch(actions.updateContributorType(item));
     };
 
-    const handleDialogOpen = (docId) => {
+    const handleDialogOpen = docId => {
       setSelectedContributor(docId);
       setDialogOpen(true);
     };
-  
+
     const handleDialogClose = () => {
       setDialogOpen(false);
     };
-  
+
     const handleDialogYes = () => {
       handleRemoveContributor();
       setDialogOpen(false);
     };
 
-
     const handleRemoveContributor = () => {
-
-      const contributor = data.contributors.find(e => e.docId === selectedContributor);
+      const contributor = data.contributors.find(
+        e => e.docId === selectedContributor,
+      );
 
       const updatedContributor = {
         project_docId: data.docId,
@@ -154,11 +152,8 @@ export const ContributorsModal = React.forwardRef(
 
       dispatch(actions.removeContributor(updatedContributor));
 
-
-
       //dispatch(actions.removeContributor(docId));
-    }
-
+    };
 
     const theme = useTheme();
 
@@ -233,12 +228,20 @@ export const ContributorsModal = React.forwardRef(
                           Client
                         </Typography>
                       )}
-                      <Box sx={{display:"flex", justifyContent:"center", paddingTop:2}}>
-                      <Button variant="outlined" onClick={() => handleDialogOpen(item.docId)}>
-            Remove
-          </Button>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          paddingTop: 2,
+                        }}
+                      >
+                        <Button
+                          variant="outlined"
+                          onClick={() => handleDialogOpen(item.docId)}
+                        >
+                          Remove
+                        </Button>
                       </Box>
-                      
                     </AccordionDetails>
                   </Accordion>
                 </Box>
@@ -298,25 +301,25 @@ export const ContributorsModal = React.forwardRef(
               ))}
             </List>
           )}
-           <Dialog
-        open={dialogOpen}
-        onClose={handleDialogClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{'Remove?'}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to remove this contributor?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose}>No</Button>
-          <Button onClick={handleDialogYes} autoFocus>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <Dialog
+            open={dialogOpen}
+            onClose={handleDialogClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{'Remove?'}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure you want to remove this contributor?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleDialogClose}>No</Button>
+              <Button onClick={handleDialogYes} autoFocus>
+                Yes
+              </Button>
+            </DialogActions>
+          </Dialog>
         </ModalStyle>
       </Modal>
     );
@@ -450,14 +453,14 @@ export function StackItem({ name, status, invited }: ItemProps) {
 }
 
 const ModalStyle = styled(Box)(({ theme }) => ({
-  position: 'absolute' as 'absolute',
+  position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
   backgroundColor: theme.palette.background.default,
-  border: '2px solid rgba(220,120,95,1)',
-  boxShadow: 24,
+  //border: '2px solid rgba(220,120,95,1)',
+  //boxShadow: 24,
   padding: 14,
   color: theme.palette.text.primary,
   overflow: 'scroll',
@@ -475,5 +478,5 @@ const Div = styled(Box)(({ theme }) => ({
 }));
 
 const H2 = styled('h2')(({ theme }) => ({
-  color: theme.palette.primary,
+  color: theme.palette.primary.main,
 }));

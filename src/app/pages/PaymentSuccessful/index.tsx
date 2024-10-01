@@ -27,9 +27,7 @@ export function PaymentSuccessful(props: Props) {
   let navigate = useNavigate();
 
   const getPaymentIntent = async () => {
-    const stripe: any = await loadStripe(
-      'pk_test_51MmOC6JNye0CcGyXNFquJ8DEUDOU6hfFCpDo1CrO8NTlFMWx2jn5dZuJllMaclEKV3LiTWUd6vhLNQcn3MDF1ydX00siPhyDMH',
-    );
+    const stripe: any = await loadStripe('pk_test_LMbQACCWivaznEqUBRKlBbSY');
 
     const clientSecret = new URLSearchParams(window.location.search).get(
       'payment_intent_client_secret',
@@ -48,7 +46,7 @@ export function PaymentSuccessful(props: Props) {
             //dispatch(actions.addPaymentStatus(paymentIntent));
 
             fetch(
-              'https://us-central1-proposal-generator-f87ad.cloudfunctions.net/addPaymentDetail',
+              'http://127.0.0.1:5001/proposal-generator-f87ad/us-central1/addPaymentDetail',
               {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

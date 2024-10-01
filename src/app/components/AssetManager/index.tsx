@@ -51,16 +51,18 @@ const Demo = styled('div')(({ theme }) => ({
 }));
 
 const ModalStyle = styled(Box)({
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  backgroundColor: '#898381',
-  border: '2px solid rgba(220,120,95,1)',
-  boxShadow: 24,
-  padding: 14,
-  color: p => p.theme.palette.text.primary,
+  style: {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    backgroundColor: '#898381',
+    border: '2px solid rgba(220,120,95,1)',
+    boxShadow: 24,
+    padding: 14,
+    color: p => p.theme.palette.text.primary,
+  },
 });
 
 function generate(element: React.ReactElement) {

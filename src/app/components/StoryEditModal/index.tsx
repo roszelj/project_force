@@ -404,16 +404,28 @@ export const StoryEditModal = React.forwardRef((props: Props, ref: any) => {
 });
 
 const ModalStyle = styled(Box)({
-  position: 'absolute' as 'absolute',
+  /*
+  StyledConfig: {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    backgroundColor: '#898381', //'background.paper',
+    border: '2px solid rgba(220,120,95,1)',
+    boxShadow: 24,
+    padding: 14,
+    color: p => p.theme.palette.text.primary,
+  },
+  */
+  backgroundColor: '#898381',
+  borderRadius: 4,
+  width: 400,
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
-  backgroundColor: '#898381', //'background.paper',
-  border: '2px solid rgba(220,120,95,1)',
-  boxShadow: 24,
+  position: 'absolute',
   padding: 14,
-  color: p => p.theme.palette.text.primary,
 });
 
 const Div = styled(Box)(({ theme }) => ({
@@ -426,5 +438,5 @@ const Div = styled(Box)(({ theme }) => ({
 }));
 
 const H2 = styled('h2')(({ theme }) => ({
-  color: theme.palette.primary,
+  color: theme.palette.primary.main,
 }));

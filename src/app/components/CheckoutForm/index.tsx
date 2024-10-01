@@ -17,12 +17,14 @@ interface Props {
   docId: any;
   paymentSchedule: String;
   paymentCurrentInstallment: Number;
+  defaultValues: any;
 }
 
 export function CheckoutForm({
   docId,
   paymentSchedule,
   paymentCurrentInstallment,
+  defaultValues,
 }: Props) {
   const stripe = useStripe();
   const elements = useElements();
@@ -113,8 +115,12 @@ export function CheckoutForm({
   };
 
   const paymentElementOptions = {
-    layout: 'tabs',
+    layout: 'accordion',
+    defaultValues: { billingDetails: defaultValues },
   };
+
+  //console.log(paymentElementOptions);
+
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
       <PaymentElement id="payment-element" options={paymentElementOptions} />

@@ -57,7 +57,7 @@ export function ProjectDetail({ id, email }: Props) {
     // Create PaymentIntent as soon as the page loads
 
     fetch(
-      'https://us-central1-proposal-generator-f87ad.cloudfunctions.net/getProjectDetail',
+      'http://127.0.0.1:5001/proposal-generator-f87ad/us-central1/getProjectDetail',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -252,15 +252,15 @@ const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
 }));
 
 const ModalStyle = styled(Box)(({ theme }) => ({
-  position: 'absolute' as 'absolute',
+  position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   minWidth: 340,
   width: 'auto',
   backgroundColor: theme.palette.background.default,
-  border: '2px solid rgba(220,120,95,1)',
-  boxShadow: 24,
+  //border: '2px solid rgba(220,120,95,1)',
+  //boxShadow: 24,
   padding: 14,
-  color: p => p.theme.palette.text.primary,
+  //color: p => p.theme.palette.text.primary,
 }));
