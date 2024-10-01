@@ -43,6 +43,8 @@ export function ProjectDetail({ id, email }: Props) {
 
   const [error, setError] = useState(false);
   const [acceptedOpen, setAcceptedOpen] = useState(false);
+  const [alert, setAlert] = useState(false);
+  const [message, setMessage] = useState('');
 
   const theme = useTheme();
 
@@ -79,12 +81,19 @@ export function ProjectDetail({ id, email }: Props) {
     setAcceptedOpen(true);
   };
 
-  const handleDecline = () => {};
+  const handleDecline = () => {
+    // alert('Not implemented');
+    setAlert(true);
+    setMessage('This feature is not yet implemented');
+  };
 
   const handleClose = () => {
     setAcceptedOpen(false);
   };
 
+  const handleAlertClose = () => {
+    setAlert(false);
+  };
   return (
     <>
       {isLoading && <LoadingIndicator strokeColor={'rgba(220,120,95,1)'} />}
@@ -93,6 +102,18 @@ export function ProjectDetail({ id, email }: Props) {
           <Alert severity="error">Unable to view project.</Alert>
         ) : (
           <Box sx={{ minWidth: 275 }}>
+            {alert ? (
+              <Alert
+                severity="error"
+                onClose={() => {
+                  handleAlertClose();
+                }}
+              >
+                {message}
+              </Alert>
+            ) : (
+              ''
+            )}
             <Card variant="outlined" sx={{ padding: '6px;', marginBottom: 3 }}>
               <CardContent>
                 <Stack
@@ -111,7 +132,6 @@ export function ProjectDetail({ id, email }: Props) {
                 </Stack>
               </CardContent>
             </Card>
-
             <Card variant="outlined">
               <CardContent>
                 <Typography variant="h5" component="div" color="text.primary">
