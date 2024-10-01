@@ -52,9 +52,7 @@ export function ProjectDetail({ id, email }: Props) {
   };
 
   useEffectOnMount(() => {
-    dispatch(actions.getProposal(id));
-
-    // Create PaymentIntent as soon as the page loads
+    //dispatch(actions.getProposal(id));
 
     fetch(
       'http://127.0.0.1:5001/proposal-generator-f87ad/us-central1/getProjectDetail',
@@ -194,7 +192,11 @@ export function ProjectDetail({ id, email }: Props) {
                       >
                         Accept Invite
                       </ColorButton>
-                      <Button variant="outlined" color="error">
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={handleDecline}
+                      >
                         Decline Invite
                       </Button>
                     </Stack>

@@ -66,5 +66,5 @@ function* loadProposal() {
 }
 
 export function* invitedSaga() {
-  yield takeLatest(actions.getProposal.type, loadProposal);
+  //yield takeLatest(actions.getProposal.type, loadProposal);
 }
