@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<AssetManager  /> should match snapshot 1`] = `
+.c1 {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.c5 {
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: inherit;
+}
+
+.c3 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  color: inherit;
+}
+
+.c3::-moz-focus-inner {
+  border-style: none;
+}
+
+.c3.Mui-disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+.c2 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-letter-spacing: 0.00938em;
+  -moz-letter-spacing: 0.00938em;
+  -ms-letter-spacing: 0.00938em;
+  letter-spacing: 0.00938em;
+  color: #9c27b0;
+  padding: 15px;
+}
+
+.c4 {
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  -webkit-letter-spacing: 0.02857em;
+  -moz-letter-spacing: 0.02857em;
+  -ms-letter-spacing: 0.02857em;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
+  min-width: 64px;
+  padding: 5px 15px;
+  border-radius: 4px;
+  -webkit-transition: background-color 250ms cubic-bezier(0.4,0,0.2,1) 0ms,box-shadow 250ms cubic-bezier(0.4,0,0.2,1) 0ms,border-color 250ms cubic-bezier(0.4,0,0.2,1) 0ms,color 250ms cubic-bezier(0.4,0,0.2,1) 0ms;
+  transition: background-color 250ms cubic-bezier(0.4,0,0.2,1) 0ms,box-shadow 250ms cubic-bezier(0.4,0,0.2,1) 0ms,border-color 250ms cubic-bezier(0.4,0,0.2,1) 0ms,color 250ms cubic-bezier(0.4,0,0.2,1) 0ms;
+  border: 1px solid rgba(25,118,210,0.5);
+  color: #1976d2;
+}
+
+.c4:hover {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  background-color: rgba(25,118,210,0.04);
+  border: 1px solid #1976d2;
+}
+
+.c4.Mui-disabled {
+  color: rgba(0,0,0,0.26);
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
+.c0 {
+  background-color: #fff;
+}
+
+@media print {
+  .c3 {
+    color-adjust: exact;
+  }
+}
+
+@media (hover:none) {
+  .c4:hover {
+    background-color: transparent;
+  }
+}
+
+<div
+  class="MuiBox-root"
+>
+  <div
+    class="c0"
+  >
+    <ul
+      class="c1 MuiList-root MuiList-padding"
+    >
+      <p
+        class="c2 MuiTypography-root MuiTypography-body1"
+      >
+        Noting uploaded yet.
+      </p>
+    </ul>
+  </div>
+  <input
+    accept="any/*"
+    id="assets_undefined"
+    multiple=""
+    name="assets_undefined"
+    style="display: none;"
+    type="file"
+  />
+  <label
+    for="assets_undefined"
+  >
+    <span
+      class="c3 MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary c4 MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary"
+      role="button"
+      tabindex="0"
+    >
+      Add
+      <span
+        class="c5 MuiTouchRipple-root"
+      />
+    </span>
+  </label>
+</div>
+`;
