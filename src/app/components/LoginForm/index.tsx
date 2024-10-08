@@ -19,6 +19,7 @@ import { useLoginSlice } from './slice';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { A } from '../A';
 import { selectInvited } from 'app/components/ProjectDetail/slice/selectors';
+import { ReactComponent as LogoImg } from 'app/components/NavBar/assets/bbd-logo.svg';
 
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -133,6 +134,7 @@ export function LoginForm(props: Props) {
 
   return (
     <>
+      <LogoImg />
       <FormGroup id="login" onSubmit={onSubmitForm} autoComplete="off">
         <FormLabel>Email</FormLabel>
         <InputWrapper>

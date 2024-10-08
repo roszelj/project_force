@@ -6,6 +6,8 @@ import { ProposalFormState } from 'app/components/Proposal/forms/ProposalForm/sl
 import { LoginState } from 'app/components/LoginForm/slice/types';
 import { ProposalPaymentState } from 'app/pages/PaymentSuccessful/slice/types';
 import { PaymentScheduleState } from 'app/components/ProjectStartCost/slice/types';
+import { ProfileState } from 'app/components/ProfileMain/slice/types';
+
 import { InvitedState } from 'app/components/ProjectDetail/slice/types';
 /* 
   Because the redux-injectors injects your reducers asynchronously somewhere in your code
@@ -23,4 +25,5 @@ export interface RootState {
   proposalPayment?: ProposalPaymentState;
   paymentSchedule?: PaymentScheduleState;
   invited?: InvitedState;
+  profile?: ProfileState;
 }

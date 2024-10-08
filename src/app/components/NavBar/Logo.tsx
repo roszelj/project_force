@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { A } from 'app/components/A';
 import { TextButton } from '../TextButton';
 import { selectLogin } from 'app/components/LoginForm/slice/selectors';
+import { ReactComponent as LogoImg } from 'app/components/NavBar/assets/bbd-logo.svg';
+
 import { useSelector } from 'react-redux';
 
 export function Logo() {
@@ -20,7 +22,7 @@ export function Logo() {
               : navigate('/');
           }}
         >
-          CHANGE TO LOGO
+          <LogoImg />
         </TextButton>
       </Title>
       <Description></Description>

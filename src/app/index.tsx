@@ -32,6 +32,8 @@ import { useLoginSlice } from 'app/components/LoginForm/slice';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectLogin } from 'app/components/LoginForm/slice/selectors';
 import { ProjectInviteLanding } from './pages/ProjectInviteLanding';
+import { Profile } from './pages/Profile';
+
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from 'firebase_setup/firebase';
 
@@ -142,6 +144,7 @@ export function App() {
           </Route>
           <Route path="/" element={<HomePage />} />
         </Route>
+        <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <GlobalStyle />

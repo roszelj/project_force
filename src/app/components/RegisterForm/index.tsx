@@ -23,6 +23,7 @@ import {
   useInvitedSlice,
 } from 'app/components/ProjectDetail/slice';
 import { selectInvited } from 'app/components/ProjectDetail/slice/selectors';
+import { ReactComponent as LogoImg } from 'app/components/NavBar/assets/bbd-logo.svg';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { formatToISO } from 'utils/firestoreDateUtil';
@@ -178,6 +179,7 @@ export function RegisterForm(props: Props) {
 
   return (
     <>
+      <LogoImg />
       <FormGroup id="register" onSubmit={onSubmitForm} autoComplete="off">
         <FormLabel>
           * Email{' '}

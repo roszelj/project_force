@@ -35,6 +35,10 @@ const slice = createSlice({
       state.profile = action.payload.profile;
       state.loading = false;
     },
+    updateUserProfile(state, action: PayloadAction<any>) {
+      state.profile = action.payload;
+      state.loading = true;
+    },
     refreshUser(state, action: PayloadAction<any>) {
       state.currentUser = action.payload;
       state.loading = true;
@@ -73,6 +77,9 @@ const slice = createSlice({
     },
     saveCurrentRoute(state, action: PayloadAction<any>) {
       state.currentUser.redirect = action.payload;
+    },
+    setLoading(state, action: PayloadAction<any>) {
+      state.loading = action.payload;
     },
   },
 });

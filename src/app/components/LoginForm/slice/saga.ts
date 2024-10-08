@@ -11,7 +11,7 @@ import {
 } from 'firebase/auth';
 
 import { useAuth } from 'firebase_setup/firebase';
-import { selectLogin } from './selectors';
+import { selectLoading, selectLogin } from './selectors';
 
 import { FirebaseConfig } from 'firebase_setup/FirestoreConfig';
 
@@ -263,10 +263,41 @@ export function* registerUser() {
   }
 }
 
+function* saveProfile() {
+  yield delay(500);
+
+  try {
+    const data: any = yield select(selectLogin);
+    // console.log(data.profile);
+
+    const docRef = doc(firestore, 'users', data.currentUser.uid);
+
+    yield call(
+      setDoc,
+      docRef,
+      {
+        name: data.profile.name,
+        company: data.profile.company,
+        country: data.profile.country,
+        available_now: data.profile.available_now,
+        searchable: data.profile.searchable,
+        summary: data.profile.summary,
+        avatar: data.profile.avatar,
+      },
+      { merge: true },
+    );
+
+    yield put(actions.setLoading(false));
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 export function* loginSaga() {
   yield takeLatest(actions.loginUser.type, authUser);
   yield takeLatest(actions.registerUserLoad.type, registerUser);
   yield takeLatest(actions.registered.type, authUser);
   yield takeLatest(actions.forgotPassword.type, resetPassword);
   yield takeLatest(actions.refreshUser.type, reAuthUser);
+  yield takeLatest(actions.updateUserProfile.type, saveProfile);
 }
